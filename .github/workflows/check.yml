@@ -27,4 +27,4 @@ jobs:
       - name: Install dev deps
         run: poetry install --only dev
       - name: Lint
-        run: bash ./scripts/lint.sh
+        run: poetry run task lint
