@@ -18,7 +18,7 @@ $ task start  # or `poetry run task start` w/o shell
 
 Now you can access [http://localhost:8000/docs](http://localhost:8000/docs) to see the docs.
 
-## Development/Testing
+## Development
 
 Copy [./.env.example](.env.example) file to `.env` file and edit the DB url there
 with corresponding fields. Additionally, if you want to test,

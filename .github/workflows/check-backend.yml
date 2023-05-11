@@ -17,6 +17,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: lint
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
