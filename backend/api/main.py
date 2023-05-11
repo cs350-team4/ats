@@ -2,15 +2,15 @@ from collections.abc import Generator
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import Session, SQLModel, create_engine
 
-from api.models import Game, GameCreate, GameRead, GameUpdate
-from api.settings import Settings
+from api import crud
+from api.models import GameCreate, GameRead, GameUpdate
+from api.settings import settings
 
-settings = Settings()
-
+assert settings.DATABASE_URI is not None
 # pool_pre_ping -> test conn is viable at the start of each conn
-engine = create_engine(settings.db_url, echo=True, pool_pre_ping=True)
+engine = create_engine(settings.DATABASE_URI, echo=True, pool_pre_ping=True)
 
 
 def create_db_and_tables() -> None:
@@ -34,22 +34,17 @@ def on_startup() -> None:
 
 @app.post("/games/", response_model=GameRead)
 def create_game(*, session: Session = Depends(get_session), game: GameCreate):
-    db_game = Game.from_orm(game)
-    session.add(db_game)
-    session.commit()
-    session.refresh(db_game)
-    return db_game
+    return crud.create_game(session, game)
 
 
 @app.get("/games/", response_model=List[GameRead])
 def read_games(*, session: Session = Depends(get_session)):
-    games = session.exec(select(Game)).all()
-    return games
+    return crud.get_games(session)
 
 
 @app.get("/games/{game_id}", response_model=GameRead)
 def read_game(*, session: Session = Depends(get_session), game_id: int):
-    game = session.get(Game, game_id)
+    game = crud.get_game(session, game_id)
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
     return game
@@ -59,23 +54,15 @@ def read_game(*, session: Session = Depends(get_session), game_id: int):
 def update_game(
     *, session: Session = Depends(get_session), game_id: int, game: GameUpdate
 ):
-    db_game = session.get(Game, game_id)
-    if not db_game:
+    updated_game = crud.update_game(session, game_id, game)
+    if not updated_game:
         raise HTTPException(status_code=404, detail="Game not found")
-    game_data = game.dict(exclude_unset=True)
-    for key, value in game_data.items():
-        setattr(db_game, key, value)
-    session.add(db_game)
-    session.commit()
-    session.refresh(db_game)
-    return db_game
+    return updated_game
 
 
-@app.delete("/games/{game_id}")
-def delete_hero(*, session: Session = Depends(get_session), game_id: int):
-    hero = session.get(Game, game_id)
-    if not hero:
+@app.delete("/games/{game_id}", response_model=GameRead)
+def delete_game(*, session: Session = Depends(get_session), game_id: int):
+    deleted_game = crud.delete_game(session, game_id)
+    if not deleted_game:
         raise HTTPException(status_code=404, detail="Hero not found")
-    session.delete(hero)
-    session.commit()
-    return {"ok": True}
+    return deleted_game
