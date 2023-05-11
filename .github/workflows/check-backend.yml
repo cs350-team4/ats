@@ -2,10 +2,10 @@ on:
   push:
     branches: [master]
     paths:
-      - './backend/*'
+      - 'backend/**'
   pull_request:
     paths:
-      - './backend/*'
+      - 'backend/**'
 
 # Only run against current ref: https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
