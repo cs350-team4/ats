@@ -7,6 +7,8 @@
 - OS: Linux (not tested on others)
 
 ## Usage
+Copy [./.env.example](.env.example) file to `.env` file and edit the DB url there
+with corresponding fields. Then run
 ```sh
 $ poetry install
 $ poetry shell
