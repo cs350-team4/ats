@@ -10,7 +10,7 @@
 ```sh
 $ poetry install
 $ poetry shell
-$ uvicorn api.main:app
+$ task start  # or `poetry run task start` w/o shell
 ```
 
 Now you can access [http://localhost:8000/docs](http://localhost:8000/docs) to see the docs.
