@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "api"
+version = "0.1.0"
+description = ""
+authors = ["Murad Bashirov <muradb@kaist.ac.kr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+sqlmodel = "^0.0.8"
+python-dotenv = "^1.0.0"
+psycopg2-binary = "^2.9.6"
+
+
+[tool.poetry.group.dev.dependencies]
+sqlalchemy-stubs = "^0.4"
+black = "^23.3.0"
+isort = "^5.12.0"
+flake8 = "^6.0.0"
+autoflake = "^2.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

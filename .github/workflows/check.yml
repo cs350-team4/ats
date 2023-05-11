@@ -1,0 +1,30 @@
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# Only run against current ref: https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+name: check
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: lint
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache-dependency-path: pyproject.toml
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.4.2"
+      - name: Install dev deps
+        run: poetry install --only dev
+      - name: Lint
+        run: bash ./scripts/lint.sh
