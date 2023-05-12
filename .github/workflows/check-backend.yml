@@ -39,6 +39,7 @@ jobs:
         with:
           poetry-version: "1.4.2"
       - name: Install dev deps
+        if: steps.cache.outputs.cache-hit != 'true'
         run: poetry install --only dev
       - name: Lint
         run: poetry run task lint
