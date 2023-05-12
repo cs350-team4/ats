@@ -5,9 +5,13 @@ from sqlmodel import Session, SQLModel, create_engine
 
 from ..main import app, get_session
 from ..settings import settings
-from .utils import random_32b_string, random_float
-from .utils.game import create_random_game, get_one_game, update_game, delete_game, get_all_games
-
+from .utils.game import (
+    create_random_game,
+    delete_game,
+    get_all_games,
+    get_one_game,
+    update_game,
+)
 
 assert settings.TEST_DB_URI is not None
 
@@ -36,6 +40,7 @@ def test_create_get_game():
     # assert game2.name == game.name
     # assert game2.exchange_rate == game.exchange_rate
     # assert game2.password == game.password
+
 
 def test_update_delete_list_game():
     game = create_random_game(client)

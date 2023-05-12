@@ -42,6 +42,12 @@ lint = "./scripts/lint.sh"
 test = "./scripts/test.sh"
 cov-html = "./scripts/test-cov-html.sh"
 
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 88
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
