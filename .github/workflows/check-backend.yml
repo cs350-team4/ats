@@ -3,9 +3,11 @@ on:
     branches: [master]
     paths:
       - 'backend/**'
+      - '.github/workflows/check-backend.yml'
   pull_request:
     paths:
       - 'backend/**'
+      - '.github/workflows/check-backend.yml'
 
 # Only run against current ref: https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
@@ -27,6 +29,11 @@ jobs:
         with:
           python-version: '3.10'
           cache-dependency-path: pyproject.toml
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-python-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}-lint
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
         with:
