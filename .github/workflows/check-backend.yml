@@ -38,7 +38,7 @@ jobs:
         id: cached-poetry-dependencies
         uses: actions/cache@v2
         with:
-          path: .venv
+          path: ./backend/.venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-lint
       - name: Install dependencies
         run: poetry install --only dev
