@@ -33,11 +33,14 @@ optional = true
 [tool.poetry.group.test.dependencies]
 httpx = "^0.24.0"
 pytest = "^7.3.1"
+pytest-cov = "^4.0.0"
 
 [tool.taskipy.tasks]
 start = "uvicorn api.main:app"
 start-dev = "uvicorn api.main:app --reload"
 lint = "./scripts/lint.sh"
+test = "./scripts/test.sh"
+cov-html = "./scripts/test-cov-html.sh"
 
 [build-system]
 requires = ["poetry-core"]
