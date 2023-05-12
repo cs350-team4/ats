@@ -41,7 +41,7 @@ jobs:
           path: ./backend/.venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-lint
       - name: Install dependencies
-        run: poetry install --only dev
+        run: poetry install --with dev
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       - name: Lint
         run: poetry run task lint
