@@ -45,3 +45,50 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       - name: Lint
         run: poetry run task lint
+
+  test:
+    runs-on: ubuntu-latest
+    name: test
+    container: python:3.10
+    defaults:
+      run:
+        working-directory: ./backend
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: ./backend/.venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-test
+      - name: Install dependencies
+        run: poetry install --with test
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      - name: Test
+        run: poetry run task test
+        env:
+          POSTGRES_SERVER: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_TEST_DB: postgres

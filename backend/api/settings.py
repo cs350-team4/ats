@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     POSTGRES_SERVER: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    POSTGRES_TEST_DB: str
+    POSTGRES_DB: str | None
+    POSTGRES_TEST_DB: str | None
 
     DATABASE_URI: PostgresDsn | None = None
     TEST_DB_URI: PostgresDsn | None = None
