@@ -35,6 +35,7 @@ optional = true
 httpx = "^0.24.0"
 pytest = "^7.3.1"
 pytest-cov = "^4.0.0"
+taskipy = "^1.10.4"
 
 [tool.taskipy.tasks]
 start = "uvicorn api.main:app"
