@@ -8,6 +8,9 @@ To setup for frontend development, VSCode Dev Container is recommended. Platform
 
 ```sh
 $ cd frontend
+# Install dependencies
+# Tip: If the dependencies are messed up, simply delete the node_module folder.
+$ npm install
 # Run the frontend in development mode, which is a preview with live reload.
 $ npm run dev
 # To build the frontend. The result is available in the /dist directory
