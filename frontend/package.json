@@ -21,6 +21,7 @@
     "@mantine/hooks": "^6.0.10",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "@yudiel/react-qr-scanner": "^1.1.8",
     "astro": "^2.4.1",
     "html-minifier-terser": "^7.2.0",
     "react": "^18.2.0",
