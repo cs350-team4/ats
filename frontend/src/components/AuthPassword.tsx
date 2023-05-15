@@ -1,5 +1,5 @@
 import type React from "react";
-import { TextInput, PasswordInput, Button, Box } from "@mantine/core";
+import { TextInput, PasswordInput, Button, Container } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 export interface AuthPasswordProps {
@@ -19,7 +19,7 @@ const AuthPassword: React.FC<AuthPasswordProps> = ({ onSubmit }) => {
 
   return (
     <>
-      <Box maw={300} mx="auto">
+      <Container size="xs">
         <form
           onSubmit={form.onSubmit(({ username, password }) =>
             onSubmit(username, password)
@@ -41,7 +41,7 @@ const AuthPassword: React.FC<AuthPasswordProps> = ({ onSubmit }) => {
             Submit
           </Button>
         </form>
-      </Box>
+      </Container>
     </>
   );
 };
