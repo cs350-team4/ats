@@ -10,6 +10,7 @@ export default function Counter({
 }) {
   const [count, setCount] = useState(initialCount);
   const add = () => setCount((i) => i + 1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const subtract = () => setCount((i) => i - 1);
 
   return (

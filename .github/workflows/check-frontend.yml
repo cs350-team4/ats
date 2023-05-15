@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Run-Lint:
+  check-frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,6 +15,9 @@ jobs:
       - name: Install Dependencies
         working-directory: ./frontend
         run: npm install
-      - name: Run ESLint
+      - name: Run Lint
         working-directory: ./frontend
         run: npm run lint
+      - name: Check TypeScript
+        working-directory: ./frontend
+        run: npm run typecheck

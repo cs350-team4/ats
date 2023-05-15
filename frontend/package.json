@@ -8,7 +8,8 @@
     "build": "astro build && sh ./post-build.sh",
     "preview": "astro preview",
     "astro": "astro",
-    "lint": "eslint src"
+    "lint": "eslint src --max-warnings=0",
+    "typecheck": "tsc --noemit"
   },
   "dependencies": {
     "@astrojs/react": "^2.1.3",
