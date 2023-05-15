@@ -1,5 +1,14 @@
 name: Check Frontend
-on: [push]
+on: 
+  push:
+    branches: [master]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/check-frontend.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/check-frontend.yml'
 
 # Only run against current ref: https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
