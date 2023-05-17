@@ -28,12 +28,14 @@ const AuthPassword: React.FC<AuthPasswordProps> = ({ onSubmit }) => {
           <TextInput
             withAsterisk
             label="Username"
+            required
             {...form.getInputProps("username")}
           />
 
           <PasswordInput
             withAsterisk
             label="Password"
+            required
             {...form.getInputProps("password")}
           />
 
