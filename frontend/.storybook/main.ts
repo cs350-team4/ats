@@ -24,5 +24,6 @@ const config = {
       shouldExtractLiteralValuesFromEnum: true
     },
   },
+  staticDirs: ['../public'], 
 };
 export default config;
