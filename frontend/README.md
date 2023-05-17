@@ -34,7 +34,10 @@ $ npm run storybook
 │   ├── components                # Put individual components here
 │   │   ├── [Name].stories.tsx    # For storybook (documentation and testing)
 │   │   ├── [Name].tsx            # Actual component code
+│   ├── data                  		# For "data" related operations, such as backend access, state stores, etc.
+│   ├── docs                  		# For additional documentations
 │   ├── env.d.ts                  # For typescript
+│   ├── global.config.ts          # Frontend configs
 │   ├── layouts                   # Put html boilerplates here
 │   └── pages                     # Put the pages here
 └── tsconfig.json                 # Typescript config
