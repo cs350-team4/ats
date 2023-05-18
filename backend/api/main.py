@@ -1,11 +1,13 @@
 from collections.abc import Generator
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 import bcrypt
 import jwt
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer
+from jwt import PyJWTError
 from sqlmodel import Session, create_engine, select
 
 from api import crud
@@ -39,6 +41,50 @@ def get_session() -> Generator[Session, None, None]:
 def get_client_session() -> Generator[Session, None, None]:
     with Session(client_engine) as session:  # type: ignore
         yield session
+
+
+def decode_jwt(token: str) -> dict | None:
+    # TODO: fix when added tests for auth
+    assert settings.PUBLIC_KEY is not None
+    try:
+        return jwt.decode(token, settings.PUBLIC_KEY, algorithms=["ES256"])
+    except PyJWTError:
+        return None
+
+
+class JWTBearer(HTTPBearer):
+    def __init__(self, auto_error: bool = True):
+        super(JWTBearer, self).__init__(auto_error=auto_error)
+
+    async def __call__(self, request: Request):
+        credentials = await super(JWTBearer, self).__call__(request)
+        if credentials:
+            if not credentials.scheme == "Bearer":
+                raise HTTPException(status_code=403, detail="Invalid authentication.")
+            jwt = decode_jwt(credentials.credentials)
+            if not jwt:
+                raise HTTPException(status_code=403, detail="Invalid authentication.")
+            return jwt
+        else:
+            raise HTTPException(status_code=403, detail="Invalid authentication.")
+
+
+class ManagerBearer(JWTBearer):
+    async def __call__(self, request: Request):
+        credentials = await super(ManagerBearer, self).__call__(request)
+        if "sub" not in credentials and credentials["sub"] != "manager":
+            raise HTTPException(status_code=403, detail="Invalid authentication.")
+        return credentials
+
+
+class StaffBearer(JWTBearer):
+    async def __call__(self, request: Request):
+        credentials = await super(StaffBearer, self).__call__(request)
+        if "sub" not in credentials and (
+            credentials["sub"] != "exchange" or credentials["sub"] != "manager"
+        ):
+            raise HTTPException(status_code=403, detail="Invalid authentication.")
+        return credentials
 
 
 origins = ["http://localhost:6006", "http://localhost:3000"]
@@ -106,7 +152,7 @@ def generate_token(
         # TODO: remove this when type changes in settings
         assert settings.PRIVATE_KEY is not None
         jwToken = jwt.encode(
-            {"name": result.username, "iat": datetime.now()},
+            {"name": result.username, "iat": datetime.now(tz=timezone.utc)},
             settings.PRIVATE_KEY,
             algorithm="ES256",
         )
