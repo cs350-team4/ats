@@ -5,6 +5,7 @@ from typing import List
 import bcrypt
 import jwt
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, create_engine, select
 
 from api import crud
@@ -40,7 +41,16 @@ def get_client_session() -> Generator[Session, None, None]:
         yield session
 
 
+origins = ["http://localhost:6006", "http://localhost:3000"]
+
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
