@@ -21,16 +21,15 @@ from api.settings import settings
 assert settings.DATABASE_URI is not None
 # pool_pre_ping -> test conn is viable at the start of each conn
 engine = create_engine(settings.DATABASE_URI, echo=True, pool_pre_ping=True)
-# TODO: make type checker pass
-client_engine = create_engine(settings.CLIENT_DB_URI, echo=True, pool_pre_ping=True)  # type: ignore
+
+assert settings.CLIENT_DB_URI is not None
+client_engine = create_engine(settings.CLIENT_DB_URI, echo=True, pool_pre_ping=True)
 
 
 def create_db_and_tables() -> None:
-    # TODO: Don't create Client
     OwnedModel.metadata.create_all(engine)
 
 
-# TODO: get client session
 def get_session() -> Generator[Session, None, None]:
     with Session(engine) as session:  # type: ignore
         yield session
