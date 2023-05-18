@@ -1,9 +1,10 @@
 from collections.abc import Generator
 
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, create_engine
 
 from ..main import app, get_session
+from ..models import OwnedModel
 from ..settings import settings
 from .utils.game import (
     create_random_game,
@@ -17,7 +18,7 @@ assert settings.TEST_DB_URI is not None
 
 engine = create_engine(settings.TEST_DB_URI)
 
-SQLModel.metadata.create_all(engine)
+OwnedModel.metadata.create_all(engine)
 
 
 def override_get_session() -> Generator[Session, None, None]:

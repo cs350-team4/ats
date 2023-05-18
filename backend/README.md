@@ -8,8 +8,10 @@
 
 ## Usage
 
-Copy [./.env.example](.env.example) file to `.env` file and edit the DB url there
-with corresponding fields. Then run
+## Client DB
+Create a new database and execute [`./data/client.sql`](./data/client.sql) to get dummy data. 
+
+Copy [./.env.example](.env.example) file to `.env` file and edit the required fields. Then run
 ```sh
 $ poetry install
 $ poetry shell
