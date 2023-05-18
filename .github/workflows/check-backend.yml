@@ -62,6 +62,9 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+        ports:
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -85,6 +88,20 @@ jobs:
       - name: Install dependencies
         run: poetry install --with test
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      - name: Install PostgreSQL client
+        run: |
+          apt-get update
+          apt-get install --yes postgresql-client
+      - name: Setup Database
+        run: |
+          psql -f data/client.sql
+          psql -c "SELECT * FROM client"
+        env:
+          PGHOST: postgres
+          PGDATABASE: postgres
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PAGER:
       - name: Test
         run: poetry run task test
         env:
@@ -97,3 +114,17 @@ jobs:
           POSTGRES_CLIENT_USER: postgres
           POSTGRES_CLIENT_PASSWORD: postgres
           POSTGRES_CLIENT_DB: postgres
+
+          # Dummy key pair for testing only
+          PUBLIC_KEY: |
+            -----BEGIN PUBLIC KEY-----
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEJ8wr6sUXlocWYzy3iidqGDYqYCXI
+            tzzPEZopV+pVf4EVMJJsRgCjywQf75b9DbS/xm5f0z2COa9hQ8WgY6IxaQ==
+            -----END PUBLIC KEY-----
+          PRIVATE_KEY: |
+            -----BEGIN EC PRIVATE KEY-----
+            MHcCAQEEIPKmf6c6dCaqHyw0vxOxzStZ3HSFjLLFEkaigA2H/LzzoAoGCCqGSM49
+            AwEHoUQDQgAEJ8wr6sUXlocWYzy3iidqGDYqYCXItzzPEZopV+pVf4EVMJJsRgCj
+            ywQf75b9DbS/xm5f0z2COa9hQ8WgY6IxaQ==
+            -----END EC PRIVATE KEY-----
+

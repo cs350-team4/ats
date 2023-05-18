@@ -43,7 +43,9 @@ COPY public.client (id, username, password, ticket_num) FROM stdin;
 2	murad	$2b$13$tx567n9OhDTDAwC7RmDRWuCdaWw2iW8dI3TyZdyx9aTxCrpsFkt56	0
 3	jirawut	$2b$13$r1.RmR2kH5gsv4NQWYIxnukJuSUdv5hdKPq4KBYWx2yHRYSmCa7vK	50
 \.
-
+-- aziz    -- password
+-- murad   -- 1
+-- jirawut -- jwt
 
 --
 -- Name: client client_pkey; Type: CONSTRAINT; Schema: public; Owner: ats
