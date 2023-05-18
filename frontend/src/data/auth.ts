@@ -4,6 +4,8 @@ import { immer } from "zustand/middleware/immer";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import * as jose from "jose";
+import * as t from "io-ts";
+import { isLeft } from "fp-ts/lib/Either";
 
 export enum UserClass {
   client = "client",
@@ -98,6 +100,30 @@ export interface UseAuthManangementResult {
   clearError: () => void;
 }
 
+// Response type for public key request
+const ResPublicKey = t.type({
+  publicKey: t.string,
+});
+
+const queryPublicKey = async () => {
+  // get request public key from server
+  const res = await fetch(API_ROOT + "/auth/publicKey");
+  if (res.ok) {
+    // extract body
+    const body = ResPublicKey.decode(await res.json());
+    if (isLeft(body)) {
+      throw new AuthenticationErrror(
+        "Server responded with invalid format when getting token verification certificate"
+      );
+    }
+    return jose.importSPKI(body.right.publicKey, "ES256");
+  } else {
+    throw new AuthenticationErrror(
+      "Cannot get token verification certificate from server."
+    );
+  }
+};
+
 /**
  * React hook for consumer of auth states
  * This one is intended for components that manages logging in/out
@@ -118,16 +144,7 @@ export const useAuthManagement = (): UseAuthManangementResult => {
     refetchOnWindowFocus: false,
     cacheTime: PUBLIC_KEY_CACHE_TIME,
     queryKey: ["repoData"],
-    queryFn: async () => {
-      const res = await fetch(API_ROOT + "/auth/publicKey");
-      if (res.ok) {
-        return jose.importSPKI(await res.text(), "ES256");
-      } else {
-        throw new AuthenticationErrror(
-          "Cannot get token verification certificate from server."
-        );
-      }
-    },
+    queryFn: queryPublicKey,
   });
 
   // helper function used by the actual login function

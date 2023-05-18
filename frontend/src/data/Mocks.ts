@@ -25,7 +25,7 @@ export const USER_PASSWORDS: Record<string, string> = {
 
 export default [
   rest.get(API_ROOT + "/auth/publicKey", (req, res, ctx) => {
-    return res(ctx.text(PUBLIC_KEY));
+    return res(ctx.json({ publicKey: PUBLIC_KEY }));
   }),
   rest.post(API_ROOT + "/auth/generateToken", async (req, res, ctx) => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
