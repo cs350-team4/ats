@@ -1,7 +1,12 @@
+import jwt
 from fastapi.testclient import TestClient
 
 from api.main import decode_jwt
 from api.settings import settings
+
+
+def generate_manager_token(priv_key: str, name: str) -> str:
+    return jwt.encode({"name": name, "sub": "manager"}, priv_key, algorithm="ES256")
 
 
 def generate_token(
