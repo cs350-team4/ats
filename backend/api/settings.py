@@ -6,9 +6,8 @@ from pydantic import BaseSettings, PostgresDsn, validator
 class Settings(BaseSettings):
     app_name: str = "Arcade Transaction System"
 
-    # TODO: remove none when making tests auth
-    PUBLIC_KEY: str | None
-    PRIVATE_KEY: str | None
+    PUBLIC_KEY: str
+    PRIVATE_KEY: str
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str

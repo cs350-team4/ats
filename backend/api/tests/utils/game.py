@@ -6,8 +6,8 @@ from . import random_32b_string, random_float
 
 
 def create_random_game(client: TestClient) -> GameRead:
-    pwd = random_32b_string()
     name = random_32b_string()
+    pwd = random_32b_string()
     ex_rate = random_float()
     response = client.post(
         "/games/", json={"name": name, "exchange_rate": ex_rate, "password": pwd}

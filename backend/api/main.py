@@ -44,8 +44,6 @@ def get_client_session() -> Generator[Session, None, None]:
 
 
 def decode_jwt(token: str) -> dict | None:
-    # TODO: fix when added tests for auth
-    assert settings.PUBLIC_KEY is not None
     try:
         return jwt.decode(token, settings.PUBLIC_KEY, algorithms=["ES256"])
     except PyJWTError:
@@ -149,8 +147,6 @@ def generate_token(
     if result is None:
         raise HTTPException(status_code=403, detail="Authentication failed")
     if bcrypt.checkpw(payload.password.encode("utf8"), result.password.encode("utf8")):
-        # TODO: remove this when type changes in settings
-        assert settings.PRIVATE_KEY is not None
         jwToken = jwt.encode(
             {"name": result.username, "iat": datetime.now(tz=timezone.utc)},
             settings.PRIVATE_KEY,
