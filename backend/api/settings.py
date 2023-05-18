@@ -6,8 +6,9 @@ from pydantic import BaseSettings, PostgresDsn, validator
 class Settings(BaseSettings):
     app_name: str = "Arcade Transaction System"
 
-    PUBLIC_KEY: str
-    PRIVATE_KEY: str
+    # TODO: remove none when making tests auth
+    PUBLIC_KEY: str | None
+    PRIVATE_KEY: str | None
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
@@ -17,7 +18,7 @@ class Settings(BaseSettings):
     POSTGRES_CLIENT_SERVER: str
     POSTGRES_CLIENT_USER: str
     POSTGRES_CLIENT_PASSWORD: str
-    POSTGRES_CLIENT_DB: str | None
+    POSTGRES_CLIENT_DB: str
 
     POSTGRES_TEST_DB: str | None
 
@@ -49,7 +50,7 @@ class Settings(BaseSettings):
             user=values.get("POSTGRES_CLIENT_USER"),
             password=values.get("POSTGRES_CLIENT_PASSWORD"),
             host=values.get("POSTGRES_CLIENT_SERVER"),
-            path=f"/{values.get('POSTGRES_CLIENT_DB') or ''}",
+            path=f"/{values.get('POSTGRES_CLIENT_DB')}",
         )
 
     @validator("TEST_DB_URI", pre=True)

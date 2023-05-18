@@ -92,3 +92,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_TEST_DB: postgres
+
+          POSTGRES_CLIENT_SERVER: postgres
+          POSTGRES_CLIENT_USER: postgres
+          POSTGRES_CLIENT_PASSWORD: postgres
+          POSTGRES_CLIENT_DB: postgres

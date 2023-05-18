@@ -94,6 +94,8 @@ def generate_token(
     if result is None:
         raise HTTPException(status_code=403, detail="Authentication failed")
     if bcrypt.checkpw(payload.password.encode("utf8"), result.password.encode("utf8")):
+        # TODO: remove this when type changes in settings
+        assert settings.PRIVATE_KEY is not None
         jwToken = jwt.encode(
             {"name": result.username, "iat": datetime.now()},
             settings.PRIVATE_KEY,
