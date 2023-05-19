@@ -17,7 +17,7 @@ class GameBase(OwnedModel):
 
 
 class Game(GameBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int = Field(default=None, primary_key=True)
 
 
 class GameCreate(GameBase):
@@ -36,7 +36,7 @@ class GameUpdate(OwnedModel):
 
 class GameStateBase(BaseModel):
     game_id: int
-    password: constr(min_length=32, max_length=32)
+    password: constr(min_length=32, max_length=32)  # type: ignore
 
 
 class GameStateUserBase(GameStateBase):
@@ -48,7 +48,8 @@ class GameStateStart(GameStateUserBase):
 
 
 class GameStateEnd(GameStateUserBase):
-    score: conint(ge=0)  # score>=0
+    # score >= 0
+    score: conint(ge=0)  # type: ignore
 
 
 class GameStateReset(GameStateBase):
