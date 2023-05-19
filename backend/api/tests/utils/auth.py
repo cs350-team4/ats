@@ -11,7 +11,7 @@ def generate_manager_token(priv_key: str, name: str) -> str:
 
 def generate_token(
     client: TestClient, username: str = "aziz", password: str = "password"
-) -> dict:
+) -> str:
     # TODO: Add `optional` field
     response = client.post(
         "/auth/generateToken", json={"username": username, "password": password}
@@ -28,7 +28,7 @@ def generate_token(
     assert payload["iat"]
     assert "sub" not in payload or payload["sub"] == "client"
 
-    return payload
+    return data["auth_token"]
 
 
 def generate_token_invalid(
