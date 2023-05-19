@@ -113,7 +113,7 @@ jobs:
           POSTGRES_CLIENT_SERVER: postgres
           POSTGRES_CLIENT_USER: postgres
           POSTGRES_CLIENT_PASSWORD: postgres
-          POSTGRES_CLIENT_DB: postgres
+          POSTGRES_TEST_CLIENT_DB: postgres
 
           # Dummy key pair for testing only
           PUBLIC_KEY: |

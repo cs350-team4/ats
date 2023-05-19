@@ -56,7 +56,11 @@ class GameStateReset(GameStateBase):
     pass
 
 
-class ClientBase(SQLModel):
+class ClientModel(SQLModel, registry=registry()):
+    pass
+
+
+class ClientBase(ClientModel):
     username: str = Field(max_length=255, nullable=False, unique=True)
     password: str = Field(min_length=60, max_length=60, nullable=False)
 
