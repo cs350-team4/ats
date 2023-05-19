@@ -1,8 +1,6 @@
-from collections.abc import Generator
-
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine
+from sqlmodel import create_engine
 
 from ..db.engine import local_engine
 from ..dependencies import GetSession
@@ -23,12 +21,6 @@ assert settings.TEST_DB_URI is not None
 test_engine = create_engine(settings.TEST_DB_URI)
 
 OwnedModel.metadata.create_all(test_engine)
-
-
-def override_get_session() -> Generator[Session, None, None]:
-    with Session(test_engine) as session:  # type: ignore
-        yield session
-
 
 app.dependency_overrides[GetSession(local_engine)] = GetSession(test_engine)
 

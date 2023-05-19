@@ -16,6 +16,12 @@ class GetSession:
         with Session(self.engine) as session:  # type: ignore
             yield session
 
+    def __hash__(self) -> int:
+        return hash(self.engine)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, GetSession) and self.engine == other.engine
+
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
