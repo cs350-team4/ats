@@ -129,12 +129,15 @@ def end_game(
     # int() takes floor
     tickets = int(game.exchange_rate * payload.score)
     stmt = (
-        update(Client)
+        # bug in sqlalchemy-stubs: #48
+        update(Client)  # type: ignore
         .values(ticket_num=Client.ticket_num + tickets)
         .where(Client.username == user["name"])
     )
-    client_session.exec(stmt)
+    client_session.exec(stmt)  # type: ignore
     client_session.commit()
+
+    active_games.pop(game.id)
 
     return Response(status_code=200)
 
@@ -147,7 +150,6 @@ def reset_game(
     if not game or payload.password != game.password:
         raise HTTPException(status_code=400, detail="Invalid Game")
 
-    assert game.id
     active_games.pop(game.id, None)
 
     return Response(status_code=200)
