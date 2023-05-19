@@ -59,6 +59,7 @@ class GameStateReset(GameStateBase):
 class PrizeBase(OwnedModel):
     name: str = Field(max_length=255)
     stock: int
+    # TODO: change SDD output to price in API
     price: int
     description: str
 
