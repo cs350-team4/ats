@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+rm dist/mockServiceWorker.js
+
 npx html-minifier-terser \
     --input-dir dist \
     --output-dir dist \
@@ -17,4 +19,3 @@ npx html-minifier-terser \
     --remove-tag-whitespace \
     --sort-attributes \
     --sort-class-name
-	

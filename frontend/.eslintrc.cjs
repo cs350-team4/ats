@@ -12,6 +12,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:prettier/recommended",
+    "plugin:storybook/recommended",
   ],
   plugins: ["@typescript-eslint", "prettier"],
   settings: {
