@@ -4,7 +4,9 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, create_engine
 
-from ..main import app, get_session
+from ..db.engine import local_engine
+from ..dependencies import GetSession
+from ..main import app
 from ..models import OwnedModel
 from ..settings import settings
 from .utils.auth import generate_manager_token
@@ -18,17 +20,17 @@ from .utils.game import (
 
 assert settings.TEST_DB_URI is not None
 
-engine = create_engine(settings.TEST_DB_URI)
+test_engine = create_engine(settings.TEST_DB_URI)
 
-OwnedModel.metadata.create_all(engine)
+OwnedModel.metadata.create_all(test_engine)
 
 
 def override_get_session() -> Generator[Session, None, None]:
-    with Session(engine) as session:  # type: ignore
+    with Session(test_engine) as session:  # type: ignore
         yield session
 
 
-app.dependency_overrides[get_session] = override_get_session
+app.dependency_overrides[GetSession(local_engine)] = GetSession(test_engine)
 
 client = TestClient(app)
 
