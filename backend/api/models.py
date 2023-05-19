@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from pydantic import BaseModel, conint, constr
 from sqlalchemy.orm import registry  # type: ignore
 from sqlmodel import Field, SQLModel
 
@@ -27,10 +28,31 @@ class GameRead(GameBase):
     id: int
 
 
-class GameUpdate(SQLModel):
+class GameUpdate(OwnedModel):
     name: Optional[str] = None
     exchange_rate: Optional[float] = None
     password: Optional[str] = Field(min_length=32, max_length=32)
+
+
+class GameStateBase(BaseModel):
+    game_id: int
+    password: constr(min_length=32, max_length=32)
+
+
+class GameStateUserBase(GameStateBase):
+    client_token: str
+
+
+class GameStateStart(GameStateUserBase):
+    pass
+
+
+class GameStateEnd(GameStateUserBase):
+    score: conint(ge=0)  # score>=0
+
+
+class GameStateReset(GameStateBase):
+    pass
 
 
 class ClientBase(SQLModel):
