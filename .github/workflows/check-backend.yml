@@ -92,6 +92,16 @@ jobs:
         run: |
           apt-get update
           apt-get install --yes postgresql-client
+      - name: Setup Database
+        run: |
+          psql -f data/client.sql
+          psql -c "SELECT * FROM client"
+        env:
+          PGHOST: postgres
+          PGDATABASE: postgres
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PAGER:
       - name: Test
         run: poetry run task test
         env:
