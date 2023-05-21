@@ -8,25 +8,19 @@ import {
   Container,
   SimpleGrid,
   Group,
+  Box,
+  Flex,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useRef } from "react";
+import type { Prize } from "../data/prize";
 
 export interface KioskPrizeDisplayProps {
-  prizeId: string;
-  name: string;
-  stock: number;
-  cost: number;
   /**
    * The number of tickets the user currently have
    */
   currentTickets: number;
-  description: string;
-  /**
-   * Image source is a url (including base64-encoded data url, https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URLs)
-   * Note: image is scaled to cover the space
-   */
-  image: string;
+  prize: Prize;
   /**
    * Callback when the user confirms the prize selection
    * @param prizeId prize id of the picked prize
@@ -39,13 +33,8 @@ export interface KioskPrizeDisplayProps {
  * A component to display individual item.
  */
 const KioskPrizeDisplay: React.FC<KioskPrizeDisplayProps> = ({
-  prizeId,
-  name,
-  stock,
-  cost,
   currentTickets,
-  description,
-  image,
+  prize: { prizeId, name, stock, cost, description, image },
   onPick,
 }) => {
   const [confirmOpened, { open: confirmOpen, close: confirmClose }] =
@@ -99,34 +88,46 @@ const KioskPrizeDisplay: React.FC<KioskPrizeDisplayProps> = ({
       </Modal>
 
       {/* The display card */}
-      <Card shadow="md" padding="md" radius="md" withBorder>
+      <Card shadow="md" padding="md" radius="md" h="100%" withBorder>
         <Card.Section>
           <Image withPlaceholder src={image} height={200} imageRef={imageRef} />
         </Card.Section>
 
-        <Text weight={700} lineClamp={1} mt="md">
-          {name}
-        </Text>
+        <Flex
+          mt="md"
+          gap="md"
+          direction="column"
+          wrap="nowrap"
+          h="calc(100% - 200px)"
+        >
+          <Flex gap="xs" direction="column" wrap="nowrap">
+            <Text weight={700} lineClamp={1}>
+              {name}
+            </Text>
 
-        <Text mt="xs">{cost} Tickets</Text>
+            <Text>{cost} Tickets</Text>
 
-        <Text color="dimmed" mt="xs" lineClamp={3}>
-          {description}
-        </Text>
+            <Text color="dimmed" lineClamp={3}>
+              {description}
+            </Text>
+          </Flex>
 
-        {stock <= 0 ? (
-          <Button fullWidth disabled mt="md" radius="xl">
-            Out of stock
-          </Button>
-        ) : cost > currentTickets ? (
-          <Button fullWidth disabled mt="md" radius="xl">
-            Not enough tickets
-          </Button>
-        ) : (
-          <Button fullWidth mt="md" radius="xl" onClick={confirmOpen}>
-            Buy
-          </Button>
-        )}
+          <Box style={{ flexGrow: 1 }}></Box>
+
+          {stock <= 0 ? (
+            <Button fullWidth disabled radius="xl">
+              Out of stock
+            </Button>
+          ) : cost > currentTickets ? (
+            <Button fullWidth disabled radius="xl">
+              Not enough tickets
+            </Button>
+          ) : (
+            <Button fullWidth radius="xl" onClick={confirmOpen}>
+              Buy
+            </Button>
+          )}
+        </Flex>
       </Card>
     </>
   );
