@@ -86,6 +86,12 @@ class PrizeUpdate(OwnedModel):
     description: str | None
 
 
+class Coupon(OwnedModel, table=True):
+    serial_num: str = Field(min_length=10, max_length=10, primary_key=True)
+    time_used: datetime | None = Field(default=None, nullable=True)
+    prize_id: int = Field(foreign_key="prize.id", nullable=False)
+
+
 class ClientModel(SQLModel, registry=registry()):
     pass
 
@@ -103,3 +109,15 @@ class GenerateToken(ClientBase):
 class Client(ClientBase, table=True):
     id: str = Field(primary_key=True)
     ticket_num: int = Field(nullable=False, default=0)
+
+
+class TicketsResponse(BaseModel):
+    tickets: int
+
+
+class IssueCouponPayload(BaseModel):
+    prize_id: int
+
+
+class IssueCouponResponse(BaseModel):
+    serial_num: constr(min_length=10, max_length=10)  # type: ignore
