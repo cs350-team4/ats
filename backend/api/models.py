@@ -56,6 +56,36 @@ class GameStateReset(GameStateBase):
     pass
 
 
+class PrizeBase(OwnedModel):
+    name: str = Field(max_length=255)
+    stock: int
+    # TODO: change SDD output to price in API
+    price: int
+    description: str
+
+
+class Prize(PrizeBase, table=True):
+    image: bytes
+    id: int = Field(default=None, primary_key=True)
+
+
+class PrizeCreate(PrizeBase):
+    image: str | bytes
+
+
+class PrizeRead(PrizeBase):
+    image: str
+    id: int
+
+
+class PrizeUpdate(OwnedModel):
+    name: str | None = Field(max_length=255)
+    stock: int | None
+    price: int | None
+    image: bytes | None
+    description: str | None
+
+
 class ClientModel(SQLModel, registry=registry()):
     pass
 
