@@ -5,29 +5,10 @@ from sqlmodel import Session, insert, select, update
 
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession, JWTBearer
-from api.models import (
-    Client,
-    Coupon,
-    IssueCouponPayload,
-    IssueCouponResponse,
-    Prize,
-    TicketsResponse,
-)
+from api.models import Client, Coupon, IssueCouponPayload, IssueCouponResponse, Prize
 from api.utils import generate_serial
 
 router: APIRouter = APIRouter()
-
-
-@router.get("/tickets", response_model=TicketsResponse)
-def get_tickets(
-    *,
-    client_info: Annotated[dict, Depends(JWTBearer())],
-    client_session: Annotated[Session, Depends(GetSession(client_engine))]
-):
-    username = client_info["name"]
-    stmt = select(Client.ticket_num).where(Client.username == username)
-    ticket_num = client_session.exec(stmt).one()
-    return {"tickets": ticket_num}
 
 
 @router.post("/issue-coupon", response_model=IssueCouponResponse)
