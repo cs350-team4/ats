@@ -12,7 +12,7 @@ class OwnedModel(SQLModel, registry=registry()):
 
 class GameBase(OwnedModel):
     name: str = Field(max_length=255, nullable=False)
-    exchange_rate: float = Field(nullable=False)
+    exchange_rate: float = Field(ge=0, nullable=False)
     password: str = Field(min_length=32, max_length=32, nullable=False)
 
 
