@@ -11,7 +11,7 @@ from api.utils import generate_serial
 router: APIRouter = APIRouter()
 
 
-@router.post("/issue-coupon", response_model=IssueCouponResponse)
+@router.post("/issue", response_model=IssueCouponResponse)
 def issue_coupon(
     *,
     client_info: Annotated[dict, Depends(JWTBearer())],
