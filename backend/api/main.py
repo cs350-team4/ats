@@ -9,8 +9,10 @@ from sqlmodel import Session, select
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession
 from api.models import Client, GenerateToken, OwnedModel
+from api.routers.coupon import router as coupon_router
 from api.routers.game import router as game_router
 from api.routers.prize import router as prize_router
+from api.routers.user import router as user_router
 from api.settings import settings
 
 
@@ -20,7 +22,7 @@ def create_db_and_tables() -> None:
 
 origins = ["http://localhost:6006", "http://localhost:3000"]
 
-app = FastAPI()
+app = FastAPI(title=settings.app_name)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -38,6 +40,8 @@ def on_startup() -> None:
 assert isinstance(game_router, APIRouter)
 app.include_router(game_router, prefix="/games")
 app.include_router(prize_router, prefix="/prizes")
+app.include_router(coupon_router, prefix="/coupon")
+app.include_router(user_router, prefix="/user")
 
 
 @app.post("/auth/generateToken")
