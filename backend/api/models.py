@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Annotated, Optional
 
-from pydantic import BaseModel, conint, constr
+from pydantic import BaseModel
+from pydantic import Field as PydField
+from pydantic import conint, constr
 from sqlalchemy.orm import registry  # type: ignore
 from sqlmodel import Field, SQLModel
 
@@ -119,5 +121,8 @@ class IssueCouponPayload(BaseModel):
     prize_id: int
 
 
+SerialNumType = Annotated[str, PydField(regex=r"^[0-9]{10}$")]
+
+
 class IssueCouponResponse(BaseModel):
-    serial_num: constr(regex=r"^[0-9]{10}$")  # type: ignore # noqa
+    serial_number: SerialNumType
