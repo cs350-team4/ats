@@ -1,5 +1,3 @@
-import random
-import string
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -15,6 +13,7 @@ from api.models import (
     Prize,
     TicketsResponse,
 )
+from api.utils import generate_serial
 
 router: APIRouter = APIRouter()
 
@@ -53,7 +52,7 @@ def issue_coupon(
     if prize.price > ticket_num:
         raise HTTPException(status_code=402, detail="Insufficient tickets")
 
-    serial_num = "".join(random.choices(string.digits, k=10))
+    serial_num = generate_serial()
     insert_coupon = insert(Coupon).values(  # type: ignore
         serial_num=serial_num, prize_id=prize.id
     )
