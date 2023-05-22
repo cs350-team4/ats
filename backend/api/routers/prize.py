@@ -10,7 +10,7 @@ from api.db.engine import local_engine
 from api.dependencies import GetSession, StaffBearer
 from api.models import PrizeCreate, PrizeRead, PrizeUpdate
 
-router: APIRouter = APIRouter()
+router: APIRouter = APIRouter(tags=["prize"])
 
 
 def b64_encode(obj: Any) -> Any:

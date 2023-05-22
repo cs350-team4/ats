@@ -8,7 +8,7 @@ from api.dependencies import GetSession, JWTBearer
 from api.models import Client, Coupon, IssueCouponPayload, IssueCouponResponse, Prize
 from api.utils import generate_serial
 
-router: APIRouter = APIRouter()
+router: APIRouter = APIRouter(tags=["coupon"])
 
 
 @router.post("/issue", response_model=IssueCouponResponse)

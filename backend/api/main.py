@@ -44,7 +44,7 @@ app.include_router(coupon_router, prefix="/coupon")
 app.include_router(user_router, prefix="/user")
 
 
-@app.post("/auth/generateToken")
+@app.post("/auth/generateToken", tags=["auth"])
 def generate_token(
     *, session: Session = Depends(GetSession(client_engine)), payload: GenerateToken
 ):
@@ -63,6 +63,6 @@ def generate_token(
         raise HTTPException(status_code=403, detail="Authentication failed")
 
 
-@app.get("/auth/publicKey")
+@app.get("/auth/publicKey", tags=["auth"])
 def public_key():
     return {"publicKey": settings.PUBLIC_KEY}

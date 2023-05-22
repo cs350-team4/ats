@@ -17,7 +17,7 @@ from api.models import (
 )
 from api.utils import decode_jwt
 
-router: APIRouter = APIRouter()
+router: APIRouter = APIRouter(tags=["game"])
 
 
 @router.post("/", response_model=GameRead)
