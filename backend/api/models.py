@@ -87,7 +87,7 @@ class PrizeUpdate(OwnedModel):
 
 
 class Coupon(OwnedModel, table=True):
-    serial_num: str = Field(min_length=10, max_length=10, primary_key=True)
+    serial_num: str = Field(regex=r"^[0-9]{10}$", primary_key=True)
     time_used: datetime | None = Field(default=None, nullable=True)
     prize_id: int = Field(foreign_key="prize.id", nullable=False)
 
@@ -120,4 +120,4 @@ class IssueCouponPayload(BaseModel):
 
 
 class IssueCouponResponse(BaseModel):
-    serial_num: constr(min_length=10, max_length=10)  # type: ignore
+    serial_num: constr(regex=r"^[0-9]{10}$")  # type: ignore # noqa
