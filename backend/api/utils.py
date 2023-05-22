@@ -38,7 +38,6 @@ def verify_serial(number: str) -> bool:
     return checksum(number) == 0
 
 
-# TODO: Random seed
 def generate_serial() -> str:
     val = "".join(random.choices(string.digits, k=9))
     return val + str(checksum(val))
