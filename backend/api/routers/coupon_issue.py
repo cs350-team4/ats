@@ -53,6 +53,9 @@ def issue_coupon(
         raise HTTPException(status_code=402, detail="Insufficient tickets")
 
     serial_num = generate_serial()
+    while local_session.get(Coupon, serial_num):
+        serial_num = generate_serial()
+
     insert_coupon = insert(Coupon).values(  # type: ignore
         serial_num=serial_num, prize_id=prize.id
     )
