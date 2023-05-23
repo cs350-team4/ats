@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./docker/client.sql:/docker-entrypoint-initdb.d/1.sql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 20501:8080
+    profiles:
+      - adminer
+
+  api:
+    build: 
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - 8000:20500
+    depends_on:
+      - db
+    environment:
+      API_PORT: 20500
+
+      POSTGRES_SERVER: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+      POSTGRES_CLIENT_SERVER: db
+      POSTGRES_CLIENT_USER: postgres
+      POSTGRES_CLIENT_PASSWORD: postgres
+      POSTGRES_CLIENT_DB: postgres
+
+      PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1baLq9Kv9jRQLqGOL8M9oFibDSMK\nkizV127PGj4sSiGlQwoU+ZqNAvGgYh//EcHrmrOHfUyiyt2ZAHi12Rlf8A==\n-----END PUBLIC KEY-----"
+      PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg1uO2fVUNyfAgJ9Y4\nm2oFJwlPipVTXMDk0mHeXAy4a4ShRANCAATVtour0q/2NFAuoY4vwz2gWJsNIwqS\nLNXXbs8aPixKIaVDChT5mo0C8aBiH/8Rweuas4d9TKLK3ZkAeLXZGV/w\n-----END PRIVATE KEY-----"
+
+volumes:
+  db:
+    driver: local
