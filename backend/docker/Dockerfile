@@ -22,8 +22,8 @@ FROM python-base as builder-base
 RUN apk add --no-cache curl build-base linux-headers
 
 WORKDIR $PYSETUP_PATH
-COPY ./docker/install-poetry.py ./
-RUN python install-poetry.py
+RUN --mount=type=cache,target=/root/.cache \
+	curl -sSL https://install.python-poetry.org | python -
 
 COPY ./poetry.lock ./pyproject.toml ./
 RUN --mount=type=cache,target=/root/.cache poetry install --without=dev
