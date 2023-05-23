@@ -9,10 +9,10 @@ const meta = {
   tags: ["autodocs"],
   args: {
     prize: {
-      prizeId: "5555",
+      id: "5555",
       name: "Item Name",
       stock: 1000,
-      cost: 100,
+      price: 100,
       description: "Item Description. ",
       image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
     },
@@ -33,10 +33,10 @@ export const Default = {} satisfies Story;
 export const OutOfStock = {
   args: {
     prize: {
-      prizeId: "5555",
+      id: "5555",
       name: "Item Name",
       stock: 0,
-      cost: 100,
+      price: 100,
       description: "Item Description. ",
       image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
     },
@@ -55,10 +55,10 @@ export const NoTickets = {
 export const LongNameAndDescription = {
   args: {
     prize: {
-      prizeId: "5555",
+      id: "5555",
       name: "Vuxxi™ Exquisite Umbrella - Summer 2023 Limited Collection Edition by Alessandro Michele",
       stock: 1000,
-      cost: 100,
+      price: 100,
       description: `The Vuxxi branded umbrella is a stunning accessory that effortlessly combines functionality with luxury. Crafted with the utmost attention to detail, it exemplifies Vuxxi's timeless elegance and iconic design aesthetic. 
   The umbrella features a sturdy and lightweight construction, ensuring durability and ease of use. Its large canopy provides ample coverage, shielding you from rain or harsh sunlight, while exuding a sense of sophistication. The fabric used is of the highest quality, offering excellent water resistance and UV protection.
   What sets the Vuxxi branded umbrella apart is its exquisite design. The canopy showcases Vuxxi's signature VX logo, intricately woven or printed onto the fabric, instantly recognizable to fashion enthusiasts. The brand's iconic motifs, such as the interlocking G pattern or the vibrant floral prints from the Vuxxi Garden collection, adorn the umbrella, making it a true statement piece.

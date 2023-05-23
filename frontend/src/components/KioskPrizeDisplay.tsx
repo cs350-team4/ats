@@ -34,7 +34,7 @@ export interface KioskPrizeDisplayProps {
  */
 const KioskPrizeDisplay: React.FC<KioskPrizeDisplayProps> = ({
   currentTickets,
-  prize: { prizeId, name, stock, cost, description, image },
+  prize: { id: prizeId, name, stock, price: cost, description, image },
   onPick,
 }) => {
   const [confirmOpened, { open: confirmOpen, close: confirmClose }] =
