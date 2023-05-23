@@ -7,7 +7,7 @@ from api.db.engine import client_engine
 from api.dependencies import GetSession, JWTBearer
 from api.models import Client, TicketsResponse
 
-router: APIRouter = APIRouter()
+router: APIRouter = APIRouter(tags=["user"])
 
 
 @router.get("/tickets", response_model=TicketsResponse)

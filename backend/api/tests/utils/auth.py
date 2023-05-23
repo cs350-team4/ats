@@ -5,8 +5,16 @@ from api.settings import settings
 from api.utils import decode_jwt
 
 
-def generate_manager_token(priv_key: str, name: str) -> str:
+def generate_manager_token(
+    priv_key: str = settings.PRIVATE_KEY, name: str = "man"
+) -> str:
     return jwt.encode({"name": name, "sub": "manager"}, priv_key, algorithm="ES256")
+
+
+def generate_staff_token(
+    priv_key: str = settings.PRIVATE_KEY, name: str = "staff"
+) -> str:
+    return jwt.encode({"name": name, "sub": "exchange"}, priv_key, algorithm="ES256")
 
 
 def generate_token(
