@@ -51,4 +51,4 @@ ENV FASTAPI_ENV=production
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY ./api/ /app/api
 WORKDIR /app
-CMD ["sh", "-c", "gunicorn -k uvicorn.workers.UvicornWorker api.main:app --host 0.0.0.0 --port $API_PORT"]
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port $API_PORT"]
