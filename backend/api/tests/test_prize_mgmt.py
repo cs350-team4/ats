@@ -51,3 +51,6 @@ def test_update_delete_prize():
     # Ensure the prize is deleted
     prizes = get_all_prizes(client)
     assert deleted_prize not in prizes
+
+
+# Add test with malformed base64

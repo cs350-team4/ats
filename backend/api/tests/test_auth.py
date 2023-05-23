@@ -1,13 +1,10 @@
-from fastapi.testclient import TestClient
-
-from ..main import app
 from ..settings import settings
 from .utils.auth import generate_token, generate_token_invalid, public_key
+from .utils.mock import client
 
 assert settings.CLIENT_DB_URI is not None
 assert settings.PUBLIC_KEY is not None
 assert settings.PRIVATE_KEY is not None
-client = TestClient(app)
 
 
 def test_auth():
