@@ -27,42 +27,42 @@ export const USER_PASSWORDS: Record<string, string> = {
 // Prize list
 export const PRIZE_LIST: Prize[] = [
   {
-    prizeId: "1",
+    id: "1",
     name: "Item 1",
     stock: 1000,
-    cost: 100,
+    price: 100,
     description: "Item Description. ",
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
   {
-    prizeId: "2",
+    id: "2",
     name: "Item 2",
     stock: 1000,
-    cost: 200,
-    description: "Item Description. ",
+    price: 200,
+    description: "!coupon-issue! This one will give coupon issue error",
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
   {
-    prizeId: "3",
+    id: "3",
     name: "Item 3",
     stock: 1000,
-    cost: 300,
+    price: 300,
     description: "Item Description. ",
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
   {
-    prizeId: "4",
+    id: "4",
     name: "Item 4",
     stock: 1000,
-    cost: 400,
+    price: 400,
     description: "Item Description. ",
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
   {
-    prizeId: "5",
+    id: "5",
     name: "Vuxxi™ Exquisite Umbrella - Summer 2023 Limited Collection Edition by Alessandro Michele",
     stock: 1000,
-    cost: 100,
+    price: 100,
     description: `The Vuxxi branded umbrella is a stunning accessory that effortlessly combines functionality with luxury. Crafted with the utmost attention to detail, it exemplifies Vuxxi's timeless elegance and iconic design aesthetic. 
 The umbrella features a sturdy and lightweight construction, ensuring durability and ease of use. Its large canopy provides ample coverage, shielding you from rain or harsh sunlight, while exuding a sense of sophistication. The fabric used is of the highest quality, offering excellent water resistance and UV protection.
 What sets the Vuxxi branded umbrella apart is its exquisite design. The canopy showcases Vuxxi's signature VX logo, intricately woven or printed onto the fabric, instantly recognizable to fashion enthusiasts. The brand's iconic motifs, such as the interlocking G pattern or the vibrant floral prints from the Vuxxi Garden collection, adorn the umbrella, making it a true statement piece.
@@ -71,29 +71,37 @@ Whether shielding you from the elements or simply adding a touch of opulence to 
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
   {
-    prizeId: "6",
+    id: "6",
     name: "Item 6",
     stock: 0,
-    cost: 100,
+    price: 100,
     description: "Item Description. ",
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
   {
-    prizeId: "7",
+    id: "7",
     name: "Item 7",
     stock: 0,
-    cost: 400,
+    price: 400,
     description: "Item Description. ",
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
 ];
 
+/**
+ * use to simulate delayed response
+ * @param ms time in milliseconds
+ * @returns promise that resolves after the specified amount of time
+ */
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default [
-  rest.get(API_ROOT + "/auth/publicKey", (req, res, ctx) => {
+  rest.get(API_ROOT + "/auth/publicKey", async (req, res, ctx) => {
+    await delay(1000);
     return res(ctx.json({ publicKey: PUBLIC_KEY }));
   }),
   rest.post(API_ROOT + "/auth/generateToken", async (req, res, ctx) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await delay(1000);
 
     const body: object = await req.json();
 
@@ -130,6 +138,84 @@ export default [
       }
     } else {
       return res(ctx.status(400), ctx.json({ message: "Malformed request" }));
+    }
+  }),
+
+  rest.get(API_ROOT + "/user/tickets", async (req, res, ctx) => {
+    await delay(1000);
+
+    // just check if the authentication header looks vaguely correct
+    if (
+      req.headers
+        .get("Authentication")
+        ?.indexOf("Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.")
+    ) {
+      // respond with random ticket count
+      const ticketCount = Math.floor(Math.random() * (2000 - 1000) + 1000);
+      return res(ctx.json({ tickets: ticketCount }));
+    } else {
+      return res(
+        ctx.status(403),
+        ctx.json({ message: "Invalid authentication" })
+      );
+    }
+  }),
+
+  rest.get(API_ROOT + "/prizes", async (req, res, ctx) => {
+    await delay(1000);
+    const dynamicPrizeList: Prize[] = [];
+    // set this to test for large prize list
+    for (let i = 0; i < 100; i++) {
+      const rn = Math.floor(Math.random() * (10 ** 8 - 1000) + 1000);
+      dynamicPrizeList.push({
+        id: rn.toFixed(),
+        name: `Item ${rn}`,
+        stock: 1000,
+        price: 400,
+        description: "Item Description. ",
+        image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
+      });
+    }
+    return res(ctx.json(PRIZE_LIST.concat(dynamicPrizeList)));
+  }),
+
+  rest.post(API_ROOT + "/coupon/issue", async (req, res, ctx) => {
+    await delay(1000);
+
+    // just check if the authentication header looks vaguely correct
+    if (
+      req.headers
+        .get("Authentication")
+        ?.indexOf("Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.")
+    ) {
+      const body: { prize_id: number } = await req.json();
+      const prizeId = body.prize_id.toFixed();
+
+      const prize = PRIZE_LIST.find((p) => p.id === prizeId);
+      if (prize) {
+        if (prize.description.includes("!coupon-issue!")) {
+          // for testing coupon issue problems
+          return res(
+            ctx.status(409),
+            ctx.json({ message: "Task failed successfully" })
+          );
+        } else {
+          // respond with random number
+          const rn = Math.floor(Math.random() * 10 ** 12);
+
+          return res(
+            ctx.status(200),
+            ctx.json({ serial_number: rn.toFixed() })
+          );
+        }
+      } else {
+        return res(ctx.status(404), ctx.json({ message: "Not found" }));
+      }
+    } else {
+      return res(
+        ctx.status(403),
+        ctx.json({ message: "Invalid authentication" })
+      );
     }
   }),
 ];
