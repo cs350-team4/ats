@@ -43,7 +43,7 @@ class JWTBearer(HTTPBearer):
 class ManagerBearer(JWTBearer):
     async def __call__(self, request: Request):
         credentials = await super(ManagerBearer, self).__call__(request)
-        if "sub" not in credentials and credentials["sub"] != "manager":
+        if "sub" not in credentials or credentials["sub"] != "manager":
             raise HTTPException(status_code=403, detail="Invalid authentication.")
         return credentials
 
@@ -51,8 +51,8 @@ class ManagerBearer(JWTBearer):
 class StaffBearer(JWTBearer):
     async def __call__(self, request: Request):
         credentials = await super(StaffBearer, self).__call__(request)
-        if "sub" not in credentials and (
-            credentials["sub"] != "exchange" or credentials["sub"] != "manager"
+        if "sub" not in credentials or (
+            credentials["sub"] != "exchange" and credentials["sub"] != "manager"
         ):
             raise HTTPException(status_code=403, detail="Invalid authentication.")
         return credentials
