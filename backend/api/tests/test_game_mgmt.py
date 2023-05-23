@@ -105,7 +105,7 @@ def test_delete_game_no_auth():
     assert response.status_code == 403
 
 
-@pytest.mark.skip(reason="Not a issue according to SRS")
+@pytest.mark.skip(reason="Not an issue according to SRS")
 def test_create_game_duplicate_name():
     game_name = "new_game_name_space_game"
     create_game_valid(client, manager_tok, game_name, "p" * 32, 1)
