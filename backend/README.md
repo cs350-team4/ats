@@ -34,3 +34,23 @@ $ ./scripts/lint.sh
 $ pytest api/tests
 ```
 
+### Using Docker Compose
+
+Docker Compose is a tool to automatically setup environment with backend, database, and other services. If you have Docker Desktop installed, Docker Compose may be enabled from the settings.
+
+```sh
+$ cd backend
+# Start backend and database
+# Note that on first run, sometimes the backend may start before the database is ready
+# In that case, simply shutdown (with Ctrl+C) and restart again
+$ docker compose up
+# Stop the backend and database
+$ docker compose down
+# Alternatively, stop and delete the database
+$ docker compose down --volumes
+# If there's problems with docker that isn't solved after containers are stopped, try rebuild
+$ docker compose up --build --force-recreate --no-deps
+# Enable adminer (Database explorer tool)
+# Note that multiple profiles may be enabled at once by having multiple --profile arguments
+$ docker compose --profile adminer up
+```
