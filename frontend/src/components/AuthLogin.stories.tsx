@@ -6,14 +6,20 @@ const meta = {
   title: "Auth/AuthLogin",
   component: AuthLogin,
   tags: ["autodocs"],
+} satisfies Meta<typeof AuthLogin>;
+type Story = StoryObj<typeof meta>;
+
+export const Default = {} satisfies Story;
+
+/**
+ * Using mocked backend
+ */
+export const MockBackend = {
   parameters: {
     msw: {
       handlers: Mocks,
     },
   },
-} satisfies Meta<typeof AuthLogin>;
-type Story = StoryObj<typeof meta>;
-
-export const Default = {} satisfies Story;
+} satisfies Story;
 
 export default meta;
