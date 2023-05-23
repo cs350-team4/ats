@@ -39,7 +39,7 @@ def issue_coupon(
         serial_num = generate_serial()
 
     insert_coupon = insert(Coupon).values(  # type: ignore
-        serial_num=serial_num, prize_id=prize.id
+        serial_number=serial_num, prize_id=prize.id
     )
     local_session.exec(insert_coupon)  # type: ignore
     local_session.commit()

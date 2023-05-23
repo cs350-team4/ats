@@ -89,7 +89,7 @@ class PrizeUpdate(OwnedModel):
 
 
 class Coupon(OwnedModel, table=True):
-    serial_num: str = Field(regex=r"^[0-9]{10}$", primary_key=True)
+    serial_number: str = Field(regex=r"^[0-9]{10}$", primary_key=True)
     time_used: datetime | None = Field(default=None, nullable=True)
     prize_id: int = Field(foreign_key="prize.id", nullable=False)
 
