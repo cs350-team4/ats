@@ -104,7 +104,7 @@ class ClientBase(ClientModel):
 
 
 class GenerateToken(ClientBase):
-    expire: datetime | None
+    # expire: datetime | None #TODO
     password: str = Field(nullable=False)
 
 

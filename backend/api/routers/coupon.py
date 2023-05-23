@@ -35,8 +35,9 @@ def issue_coupon(
         raise HTTPException(status_code=402, detail="Insufficient tickets")
 
     serial_num = generate_serial()
-    while local_session.get(Coupon, serial_num):
+    while local_session.get(Coupon, serial_num) or serial_num == "0000000000":
         serial_num = generate_serial()
+    # 0000000000 is reserved for testing
 
     insert_coupon = insert(Coupon).values(  # type: ignore
         serial_number=serial_num, prize_id=prize.id
@@ -88,6 +89,7 @@ def use_coupon(
     return Response(status_code=200)
 
 
+# TODO: Open issue: No check for user
 @router.delete("/{serial_num}")
 def delete_coupon(
     *,

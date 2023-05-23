@@ -42,7 +42,7 @@ ALTER TABLE public.client OWNER TO ats;
 --
 
 COPY public.client (id, username, password, ticket_num) FROM stdin;
-1	aziz	$2b$13$tDAPZdNVL9l/G.vtCcw0Z.DWqzk0yU1W7D6mrD5jQUPMIVmqwscyK	100
+1	aziz	$2b$13$tDAPZdNVL9l/G.vtCcw0Z.DWqzk0yU1W7D6mrD5jQUPMIVmqwscyK	1000000
 2	murad	$2b$13$tx567n9OhDTDAwC7RmDRWuCdaWw2iW8dI3TyZdyx9aTxCrpsFkt56	0
 3	jirawut	$2b$13$r1.RmR2kH5gsv4NQWYIxnukJuSUdv5hdKPq4KBYWx2yHRYSmCa7vK	50
 \.
