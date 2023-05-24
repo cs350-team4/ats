@@ -86,6 +86,7 @@ const KioskIssueCouponBody: React.FC<{ auth: UseAuthResult }> = ({ auth }) => {
         onClose={couponIssueReset}
         closeOnEscape={false}
         closeOnClickOutside={false}
+        withCloseButton={false}
         title="Coupon Issue"
         centered
       >
