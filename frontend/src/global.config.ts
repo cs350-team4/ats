@@ -6,3 +6,7 @@ export const PUBLIC_KEY_CACHE_TIME = 15 * 60 * 1000; // unit: ms
 export const PRIZE_LIST_LIMIT = 1000000;
 // Number of prizes per page
 export const PRIZE_LIST_PAGE_LENGTH = 24;
+// The time prize list will be cached
+export const PRIZE_LIST_CACHE_TIME = 15 * 60 * 1000; // unit: ms
+// The minimum time cached prize list will be used without refresh
+export const PRIZE_LIST_STALE_TIME = 20 * 1000; // unit: ms

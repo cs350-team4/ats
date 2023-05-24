@@ -1,7 +1,12 @@
 import * as t from "io-ts";
-import { API_ROOT, PRIZE_LIST_LIMIT } from "../global.config";
+import {
+  API_ROOT,
+  PRIZE_LIST_CACHE_TIME,
+  PRIZE_LIST_LIMIT,
+  PRIZE_LIST_STALE_TIME,
+} from "../global.config";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { parseJsonResponse } from "./utils";
+import { ParseJsonErrOptions, parseJsonResponse } from "./utils";
 
 export interface Prize {
   id: string;
@@ -65,11 +70,13 @@ export class PrizeListQueryError extends Error {
 export const usePrizeList = () => {
   return useQuery({
     queryKey: ["prizeList"],
+    cacheTime: PRIZE_LIST_CACHE_TIME,
+    staleTime: PRIZE_LIST_STALE_TIME,
     queryFn: async (): Promise<Prize[]> => {
       // get current ticket from server
       const res = await fetch(
         API_ROOT +
-          "/prizes?" +
+          "/prizes/?" +
           new URLSearchParams({
             limit: PRIZE_LIST_LIMIT.toFixed(),
           }).toString()
@@ -135,9 +142,12 @@ export const usePrizeList = () => {
 
 // Custom error for public key query
 export class CouponIssueError extends Error {
-  constructor(message?: string) {
-    super(message);
+  httpCode?: number;
+
+  constructor(message?: string, options?: ParseJsonErrOptions) {
+    super(message, options);
     this.name = "Coupon issue error";
+    this.httpCode = options?.httpCode;
   }
 }
 
@@ -171,7 +181,7 @@ export const useCouponIssue = () => {
         t.type({
           serial_number: t.string,
         }),
-        PrizeListQueryError
+        CouponIssueError
       );
 
       return data.serial_number;
@@ -184,6 +194,19 @@ export const useCouponIssue = () => {
       return queryClient.invalidateQueries({
         queryKey: ["currentTicket", variables.jwt],
       });
+    },
+    onError: (error) => {
+      if (error instanceof CouponIssueError) {
+        if (error.httpCode === 409) {
+          // invalidate prize list if out of stock error
+          // don't need to wait for prize list refresh as that can take a long time
+
+          // eslint-disable-next-line no-void
+          void queryClient.invalidateQueries({
+            queryKey: ["prizeList"],
+          });
+        }
+      }
     },
   });
 };
