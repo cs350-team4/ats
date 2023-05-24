@@ -12,7 +12,7 @@ const AuthLogin: React.FunctionComponent = () => {
 
   return (
     <>
-      <Container size="xs">
+      <Container size="xs" mt="xl">
         <Box>
           {/* Block user interaction while logging in */}
           <LoadingOverlay

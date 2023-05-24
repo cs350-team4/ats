@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import KioskUI from "../components/KioskUI";
+---
+
+<Layout title="Coupon Kiosk">
+  <KioskUI client:only="react">
+    <h1>Hello, React!</h1>
+    <KioskUI />
+  </KioskUI>
+</Layout>

@@ -1,9 +1,10 @@
 import type React from "react";
-import { AppShell, Navbar } from "@mantine/core";
+import { AppShell, Box, Navbar } from "@mantine/core";
 import AuthLogin from "./AuthLogin";
 import { useAuth } from "../data/auth";
 import KioskIssueCoupon from "./KioskIssueCoupon";
 import KioskSidePanel from "./KioskSidePanel";
+import GlobalWrapper from "./GlobalWrapper";
 
 /**
  * Full Kiosk UI. This is what should be displayed on the kiosk.
@@ -14,14 +15,14 @@ const KioskUI: React.FunctionComponent = () => {
   if (!auth) {
     // Display login page when logged out
     return (
-      <>
+      <GlobalWrapper>
         <AuthLogin />
-      </>
+      </GlobalWrapper>
     );
   }
 
   return (
-    <>
+    <GlobalWrapper>
       <AppShell
         padding="md"
         navbar={
@@ -32,7 +33,7 @@ const KioskUI: React.FunctionComponent = () => {
       >
         <KioskIssueCoupon />
       </AppShell>
-    </>
+    </GlobalWrapper>
   );
 };
 

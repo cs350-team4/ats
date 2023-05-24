@@ -42,7 +42,7 @@ const KioskIssueCouponBody: React.FC<{ auth: UseAuthResult }> = ({ auth }) => {
   // Various loading/error overlays
   if (currentTicketStatus === "loading" || prizeListStatus === "loading") {
     return (
-      <Center>
+      <Center h="100%">
         <Loader />
       </Center>
     );
