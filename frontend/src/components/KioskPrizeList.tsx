@@ -9,6 +9,7 @@ import {
   useMantineTheme,
   Pagination,
   Flex,
+  Center,
 } from "@mantine/core";
 import KioskPrizeDisplay from "./KioskPrizeDisplay";
 import type { Prize } from "../data/prize";
@@ -97,6 +98,10 @@ const KioskPrizeList: React.FC<KioskPrizeListProps> = ({
     activePage * PRIZE_LIST_PAGE_LENGTH
   );
 
+  if (pageCount > 0 && activePage > pageCount) {
+    setPage(pageCount);
+  }
+
   return (
     <>
       <Container fluid>
@@ -117,7 +122,7 @@ const KioskPrizeList: React.FC<KioskPrizeListProps> = ({
               }
             />
             <Chip variant="filled" onClick={toggleFilterCanAfford}>
-              Affortable Only
+              Affordable Only
             </Chip>
             <Chip variant="filled" onClick={toggleFilterInStock}>
               In Stock Only
@@ -129,7 +134,9 @@ const KioskPrizeList: React.FC<KioskPrizeListProps> = ({
 
         {displayPrizes.length === 0 ? (
           // List is empty
-          <Text>No prizes found</Text>
+          <Center>
+            <Text>No prizes found</Text>
+          </Center>
         ) : (
           // List is not empty
           <Box
