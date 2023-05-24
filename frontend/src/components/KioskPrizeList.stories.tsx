@@ -63,3 +63,37 @@ export const MixShortLongItems = {
     ],
   },
 } satisfies Story;
+
+/**
+ * Test filtering. List should behave nicely when the filtered list is empty.
+ */
+export const AllUnaffordable = {
+  args: {
+    prizes: [
+      {
+        id: "1",
+        name: "Item 1",
+        stock: 1000,
+        price: 10 ** 8,
+        description: "Item Description. ",
+        image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
+      },
+      {
+        id: "2",
+        name: "Item 2",
+        stock: 1000,
+        price: 10 ** 8,
+        description: "Item Description. ",
+        image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
+      },
+      {
+        id: "3",
+        name: "Item 3",
+        stock: 1000,
+        price: 10 ** 8,
+        description: "Item Description. ",
+        image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
+      },
+    ],
+  },
+} satisfies Story;
