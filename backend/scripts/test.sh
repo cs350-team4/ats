@@ -27,4 +27,4 @@ if [[ -z "$CI" ]]; then
     psql -c "SELECT * FROM client"
 fi
 
-pytest --cov=api --cov-report=term-missing api/tests "${@}"
+pytest --pikachu --cov=api --cov-report=term-missing api/tests "${@}"
