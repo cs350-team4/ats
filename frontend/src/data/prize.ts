@@ -90,14 +90,45 @@ export const usePrizeList = () => {
         PrizeListQueryError
       );
 
-      return data.map((item) => ({
-        id: typeof item.id === "number" ? item.id.toFixed() : item.id,
-        name: item.name,
-        stock: item.stock,
-        price: item.price,
-        description: item.description,
-        image: item.image,
-      }));
+      return data.map((item) => {
+        let dataUrl = "";
+        // detect image type and transforms them into data url
+        switch (item.image.charAt(0)) {
+          case "/":
+            // jpg
+            dataUrl = "data:image/jpeg;base64," + item.image;
+            break;
+          case "i":
+            // png
+            dataUrl = "data:image/png;base64," + item.image;
+            break;
+          case "R":
+            // gif
+            dataUrl = "data:image/gif;base64," + item.image;
+            break;
+          case "U":
+            // webp
+            dataUrl = "data:image/webp;base64," + item.image;
+            break;
+          case "P":
+            // svg
+            dataUrl = "data:image/svg+xml;base64," + item.image;
+            break;
+          default:
+            // Unknown
+            dataUrl = item.image;
+            break;
+        }
+
+        return {
+          id: typeof item.id === "number" ? item.id.toFixed() : item.id,
+          name: item.name,
+          stock: item.stock,
+          price: item.price,
+          description: item.description,
+          image: dataUrl,
+        };
+      });
     },
   });
 };
