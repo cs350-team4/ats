@@ -1019,6 +1019,21 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtualenv"]
 
 [[package]]
+name = "pytest-pikachu"
+version = "1.0.0"
+description = "Show surprise when tests are passing"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pytest-pikachu-1.0.0.tar.gz", hash = "sha256:8acd13fdc51491e86aff5106cfaa31f80f4584ac41dcc3ae512d471c18333fd7"},
+    {file = "pytest_pikachu-1.0.0-py3-none-any.whl", hash = "sha256:c20cfe20a84978e11e69af24f7a9d07beb90cbca805ae5011e2061c14a486eb6"},
+]
+
+[package.dependencies]
+pytest = "*"
+
+[[package]]
 name = "python-dotenv"
 version = "1.0.0"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -1467,4 +1482,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8b9f56692a9410369b42378eb0744aa6219e4b845e31cf8fd811ce1cef3b855f"
+content-hash = "79d9e34020c9c3acb87f7042a2bb8f5fd7ed77f7b25bb90492305e2e37e8d7f9"
