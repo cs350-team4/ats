@@ -14,26 +14,30 @@ export const parseJsonResponse = async <T>(
   typ: t.Type<T>,
   ErrTyp: { new (message: string, options?: ErrorOptions): Error } = Error
 ): Promise<T> => {
-  const body: unknown = await res.json();
+  if (res.headers.get("content-type") === "application/json") {
+    const body: unknown = await res.json();
 
-  if (res.ok) {
-    // extract body
-    const data = typ.decode(body);
-    if (isLeft(data)) {
-      throw new ErrTyp("Server responded with invalid format");
-    }
+    if (res.ok) {
+      // extract body
+      const data = typ.decode(body);
+      if (isLeft(data)) {
+        throw new ErrTyp("Server responded with invalid format");
+      }
 
-    return data.right;
-  } else {
-    if (
-      body &&
-      typeof body === "object" &&
-      "message" in body &&
-      typeof body.message === "string"
-    ) {
-      throw new ErrTyp(body.message);
+      return data.right;
     } else {
-      throw new ErrTyp("Unknown server error");
+      if (
+        body &&
+        typeof body === "object" &&
+        "message" in body &&
+        typeof body.message === "string"
+      ) {
+        throw new ErrTyp(body.message);
+      } else {
+        throw new ErrTyp("Unknown server error");
+      }
     }
+  } else {
+    throw new ErrTyp(`Server responded with ${res.status} ${res.statusText}`);
   }
 };
