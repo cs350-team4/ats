@@ -34,7 +34,7 @@ export const useCurrentTicketCount = (jwt: string) => {
       // get current ticket from server
       const res = await fetch(API_ROOT + "/user/tickets", {
         headers: {
-          Authentication: "Bearer " + queryKey[1],
+          Authorization: "Bearer " + queryKey[1],
         },
       });
 
@@ -128,7 +128,7 @@ export const useCouponIssue = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authentication: "Bearer " + jwt,
+          Authorization: "Bearer " + jwt,
         },
         body: JSON.stringify({
           prize_id: Number(prizeId),

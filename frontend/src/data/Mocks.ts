@@ -147,7 +147,7 @@ export default [
     // just check if the authentication header looks vaguely correct
     if (
       req.headers
-        .get("Authentication")
+        .get("Authorization")
         ?.indexOf("Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.")
     ) {
       // respond with random ticket count
@@ -185,7 +185,7 @@ export default [
     // just check if the authentication header looks vaguely correct
     if (
       req.headers
-        .get("Authentication")
+        .get("Authorization")
         ?.indexOf("Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.")
     ) {
       const body: { prize_id: number } = await req.json();
