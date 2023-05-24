@@ -1,5 +1,5 @@
 import type React from "react";
-import { AppShell, Box, Navbar } from "@mantine/core";
+import { AppShell, Navbar } from "@mantine/core";
 import AuthLogin from "./AuthLogin";
 import { useAuth } from "../data/auth";
 import KioskIssueCoupon from "./KioskIssueCoupon";
