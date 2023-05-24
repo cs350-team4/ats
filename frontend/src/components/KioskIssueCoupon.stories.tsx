@@ -1,13 +1,15 @@
-import AuthLogin from "./AuthLogin";
-import type { Meta, StoryObj } from "@storybook/react";
 import Mocks from "../data/Mocks";
+import KioskIssueCoupon from "./KioskIssueCoupon";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Auth/AuthLogin",
-  component: AuthLogin,
+  title: "Kiosk/KioskIssueCoupon",
+  component: KioskIssueCoupon,
   tags: ["autodocs"],
-} satisfies Meta<typeof AuthLogin>;
+} satisfies Meta<typeof KioskIssueCoupon>;
 type Story = StoryObj<typeof meta>;
+
+export default meta;
 
 export const Default = {} satisfies Story;
 
@@ -21,5 +23,3 @@ export const MockBackend = {
     },
   },
 } satisfies Story;
-
-export default meta;

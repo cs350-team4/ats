@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import * as jose from "jose";
 import * as t from "io-ts";
-import { isLeft } from "fp-ts/lib/Either";
+import { parseJsonResponse } from "./utils";
 
 export enum UserClass {
   client = "client",
@@ -58,18 +58,13 @@ const useAuthStore = create(
   }))
 );
 
+/**
+ * Public API for useAuth
+ */
 export interface UseAuthResult {
   name: string;
   userClass: UserClass;
   jwt: string;
-}
-
-// Custom AuthenticationErrror
-export class AuthenticationErrror extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "AuthenticationError";
-  }
 }
 
 /**
@@ -89,6 +84,40 @@ export const useAuth = (): UseAuthResult | undefined => {
   }
 };
 
+// Custom error for public key query
+export class PublicKeyQueryError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "Public key query error";
+  }
+}
+
+const queryPublicKey = async () => {
+  // get request public key from server
+  const res = await fetch(API_ROOT + "/auth/publicKey");
+
+  const data = await parseJsonResponse(
+    res,
+    t.type({
+      publicKey: t.string,
+    }),
+    PublicKeyQueryError
+  );
+
+  return jose.importSPKI(data.publicKey, "ES256");
+};
+
+// Custom error for public key query
+export class AuthenticationError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "Authentication error";
+  }
+}
+
+/**
+ * Public API for useAuthManagement
+ */
 export interface UseAuthManangementResult {
   // when true, show a loading indicator and block user from clicking login button
   logginIn: boolean;
@@ -99,30 +128,6 @@ export interface UseAuthManangementResult {
   error?: Error;
   clearError: () => void;
 }
-
-// Response type for public key request
-const ResPublicKey = t.type({
-  publicKey: t.string,
-});
-
-const queryPublicKey = async () => {
-  // get request public key from server
-  const res = await fetch(API_ROOT + "/auth/publicKey");
-  if (res.ok) {
-    // extract body
-    const body = ResPublicKey.decode(await res.json());
-    if (isLeft(body)) {
-      throw new AuthenticationErrror(
-        "Server responded with invalid format when getting token verification certificate"
-      );
-    }
-    return jose.importSPKI(body.right.publicKey, "ES256");
-  } else {
-    throw new AuthenticationErrror(
-      "Cannot get token verification certificate from server."
-    );
-  }
-};
 
 /**
  * React hook for consumer of auth states
@@ -143,7 +148,7 @@ export const useAuthManagement = (): UseAuthManangementResult => {
   } = useQuery({
     refetchOnWindowFocus: false,
     cacheTime: PUBLIC_KEY_CACHE_TIME,
-    queryKey: ["repoData"],
+    queryKey: ["publicKey"],
     queryFn: queryPublicKey,
   });
 
@@ -188,31 +193,27 @@ export const useAuthManagement = (): UseAuthManangementResult => {
         }),
       });
 
+      const data = await parseJsonResponse(
+        res,
+        t.type({
+          auth_token: t.string,
+        }),
+        AuthenticationError
+      );
+
+      await verifyAndSetToken(data.auth_token);
+
       // parse response
       const body: unknown = await res.json();
       if (typeof body !== "object" || body === null) {
         throw new Error("Server responded with invalid JSON");
-      }
-
-      if (res.ok) {
-        if ("auth_token" in body && typeof body.auth_token === "string") {
-          await verifyAndSetToken(body.auth_token);
-        } else {
-          throw new AuthenticationErrror("Server responded without auth token");
-        }
-      } else {
-        if ("message" in body && typeof body.message === "string") {
-          throw new AuthenticationErrror(body.message);
-        } else {
-          throw new AuthenticationErrror("Unknown server error");
-        }
       }
     } catch (err: unknown) {
       // set error for ui to display
       if (err instanceof Error) {
         setError(err);
       } else {
-        setError(new AuthenticationErrror("Unknown error"));
+        setError(new AuthenticationError("Unknown error"));
       }
     } finally {
       // restore to ability to log in
@@ -239,7 +240,7 @@ export const useAuthManagement = (): UseAuthManangementResult => {
       if (err instanceof Error) {
         setError(err);
       } else {
-        setError(new AuthenticationErrror("Unknown Error"));
+        setError(new AuthenticationError("Unknown Error"));
       }
     } finally {
       // restore to ability to log in
