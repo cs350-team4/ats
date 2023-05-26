@@ -1,4 +1,4 @@
-# Arcade Transaction System -- Frontend
+# Arcade Transaction System -- PC App
 
 ## Prerequisites
 - NodeJS >= v18.16.0
