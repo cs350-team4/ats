@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="css/login.css">
+  <script src="js/login.js" defer></script>
+</head>
+<body id="login-body">
+  <div class="container">
+    <h2 id="login-header">Login</h2>
+    <form onsubmit="handleLoginSubmit(event)">
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="login-button">Login</button>
+      <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>
+    </form>
+  </div>
+</body>
+</html>
