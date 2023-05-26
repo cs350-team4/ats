@@ -1,4 +1,4 @@
-name: Check Frontend
+name: Check App
 on: 
   push:
     branches: [master]
