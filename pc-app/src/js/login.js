@@ -1,3 +1,5 @@
+/*global ipcRenderer*/
+
 var urlParams = new URLSearchParams(window.location.search);
 var username = urlParams.get('username');
 
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 ipcRenderer.on('userlist:done', (options) => {
-  for (user of options.users) {
+  for (const user of options.users) {
     addUser(user.username);
   }
   document.body.style.display = "block";
@@ -58,15 +60,13 @@ function addUser(username) {
   userList.appendChild(userDiv);
 }
 
-function handleLoginSubmit(event) {
+function handleLoginSubmit(event) { // eslint-disable-line no-unused-vars
   event.preventDefault();
-  var urlParams = new URLSearchParams(window.location.search);
-  var username = urlParams.get('username');
   var password = document.getElementById("password").value;
   ipcRenderer.send('login:submit', {username, password});
 }
 
-ipcRenderer.on('login:success', (options) => {
+ipcRenderer.on('login:success', (_options) => {
   goToInterface();
   console.log("success");
 });
@@ -75,16 +75,14 @@ ipcRenderer.on('login:failure', (options) => {
   console.log("failure: ", options);
 });
 
-function handleResetSubmit(event) {
+function handleResetSubmit(event) { // eslint-disable-line no-unused-vars
   event.preventDefault();
-  var urlParams = new URLSearchParams(window.location.search);
-  var username = urlParams.get('username');
   var jwt = document.getElementById("jwt").value;
   var password = document.getElementById("password").value;
   ipcRenderer.send('reset:submit', {username, jwt, password});
 }
 
-ipcRenderer.on('reset:success', (options) => {
+ipcRenderer.on('reset:success', (_options) => {
   goToUserlist();
   console.log("success");
 });
@@ -93,14 +91,14 @@ ipcRenderer.on('reset:failure', (options) => {
   console.log("failure: ", options);
 });
 
-function handleRegisterSubmit(event) {
+function handleRegisterSubmit(event) { // eslint-disable-line no-unused-vars
   event.preventDefault();
   var jwt = document.getElementById("jwt").value;
   var password = document.getElementById("password").value;
   ipcRenderer.send('register:submit', {jwt, password});
 }
 
-ipcRenderer.on('register:success', (options) => {
+ipcRenderer.on('register:success', (_options) => {
   goToUserlist();
   console.log("success");
 });
@@ -109,22 +107,22 @@ ipcRenderer.on('register:failure', (options) => {
   console.log("failure: ", options);
 });
 
-function goToUserlist() {
+function goToUserlist() { // eslint-disable-line no-unused-vars
   window.location.href = 'userlist.html';
 }
 
-function goToLogin(username) {
+function goToLogin(username) { // eslint-disable-line no-unused-vars
   window.location.href = `login.html?username=${username}`;
 }
 
-function goToReset(username) {
+function goToReset(username) { // eslint-disable-line no-unused-vars
   window.location.href = `reset.html?username=${username}`;
 }
 
-function goToRegister() {
+function goToRegister() { // eslint-disable-line no-unused-vars
   window.location.href = `register.html`;
 }
 
-function goToInterface() {
+function goToInterface() { // eslint-disable-line no-unused-vars
   window.location.href = `interface.html`;
 }

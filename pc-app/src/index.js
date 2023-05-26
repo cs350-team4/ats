@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain} = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -32,7 +32,7 @@ const createUserlistWindow = () => {
   // Get public key
   axios.get(publicKeyEndpoint).then(response => {
     publicKey = response.data.publicKey;
-  }).catch(err => {
+  }).catch(_err => {
     loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
   });
   
@@ -81,13 +81,13 @@ const menu  = [
 */
 
 // Send all users to renderer
-ipcMain.on('userlist:get', (e, options) => {
-  database = readDatabase();
+ipcMain.on('userlist:get', (_err, _options) => {
+  const database = readDatabase();
   loginWindow.webContents.send('userlist:done', database);
 });
 
 // Handle loggin
-ipcMain.on('login:submit', (e, options) => {
+ipcMain.on('login:submit', (_err, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
     loginWindow.webContents.send('login:success');
@@ -97,7 +97,7 @@ ipcMain.on('login:submit', (e, options) => {
 });
 
 // Handle reset
-ipcMain.on('reset:submit', (e, options) => {
+ipcMain.on('reset:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
       loginWindow.webContents.send('register:failure', 'jwt verification failed');
@@ -117,7 +117,7 @@ ipcMain.on('reset:submit', (e, options) => {
 });
 
 // Handle register
-ipcMain.on('register:submit', (e, options) => {
+ipcMain.on('register:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
       loginWindow.webContents.send('register:failure', 'jwt verification failed');
@@ -274,6 +274,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    createUserlistWindow();
   }
 });
