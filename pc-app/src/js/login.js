@@ -23,7 +23,7 @@ ipcRenderer.on('userlist:done', (options) => {
 });
 
 ipcRenderer.on('pubkey:failure', (options) => {
-  console.log("failure: could not retrieve public key")
+  console.log('failure: ', options)
 });
 
 function addUser(username) {
@@ -59,9 +59,9 @@ function addUser(username) {
 }
 
 function handleLoginSubmit(event) {
+  event.preventDefault();
   var urlParams = new URLSearchParams(window.location.search);
   var username = urlParams.get('username');
-  event.preventDefault();
   var password = document.getElementById("password").value;
   ipcRenderer.send('login:submit', {username, password});
 }
@@ -76,9 +76,9 @@ ipcRenderer.on('login:failure', (options) => {
 });
 
 function handleResetSubmit(event) {
+  event.preventDefault();
   var urlParams = new URLSearchParams(window.location.search);
   var username = urlParams.get('username');
-  event.preventDefault();
   var jwt = document.getElementById("jwt").value;
   var password = document.getElementById("password").value;
   ipcRenderer.send('reset:submit', {username, jwt, password});
@@ -95,10 +95,9 @@ ipcRenderer.on('reset:failure', (options) => {
 
 function handleRegisterSubmit(event) {
   event.preventDefault();
-  var username = document.getElementById("username").value;
   var jwt = document.getElementById("jwt").value;
   var password = document.getElementById("password").value;
-  ipcRenderer.send('register:submit', {username, jwt, password});
+  ipcRenderer.send('register:submit', {jwt, password});
 }
 
 ipcRenderer.on('register:success', (options) => {

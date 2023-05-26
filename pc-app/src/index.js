@@ -33,7 +33,7 @@ const createUserlistWindow = () => {
   axios.get(publicKeyEndpoint).then(response => {
     publicKey = response.data.publicKey;
   }).catch(err => {
-    loginWindow.webContents.send('pubkey:failure', err);
+    loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
   });
   
   loginWindow = new BrowserWindow({
@@ -98,22 +98,38 @@ ipcMain.on('login:submit', (e, options) => {
 
 // Handle reset
 ipcMain.on('reset:submit', (e, options) => {
-  const err = resetUser(options.username, options.jwt, options.password);
-  if (!err) {
-    loginWindow.webContents.send('reset:success');
-  } else {
-    loginWindow.webContents.send('reset:failure', err);
-  }
+  jwt.verify(options.jwt, publicKey, (err, decoded) => {
+    if (err) {
+      loginWindow.webContents.send('register:failure', 'jwt verification failed');
+      return;
+    } 
+    if (options.username !== decoded.name) {
+      loginWindow.webContents.send('register:failure', 'jwt does not belong to this user');
+      return;
+    }
+    err = resetUser(decoded.name, options.jwt, options.password);
+    if (!err) {
+      loginWindow.webContents.send('register:success');
+    } else {
+      loginWindow.webContents.send('register:failure', err);
+    }
+  });
 });
 
 // Handle register
 ipcMain.on('register:submit', (e, options) => {
-  const err = addUser(options.username, options.jwt, options.password);
-  if (!err) {
-    loginWindow.webContents.send('register:success');
-  } else {
-    loginWindow.webContents.send('register:failure', err);
-  }
+  jwt.verify(options.jwt, publicKey, (err, decoded) => {
+    if (err) {
+      loginWindow.webContents.send('register:failure', 'jwt verification failed');
+      return;
+    }
+    err = addUser(decoded.name, options.jwt, options.password);
+    if (!err) {
+      loginWindow.webContents.send('register:success');
+    } else {
+      loginWindow.webContents.send('register:failure', err);
+    }
+  });
 });
 
 // Read the JSON file
