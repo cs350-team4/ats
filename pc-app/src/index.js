@@ -12,6 +12,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === "darwin";
 const algorithm = 'aes-256-gcm';
 
+// Public key is hardcoded for testing reasons
 let publicKeyEndpoint = "http://127.0.0.1:8000/auth/publicKey";
 let loginWindow;
 let publicKey;
@@ -27,6 +28,13 @@ const createUserlistWindow = () => {
   // Implement menu
   //const loginMenu = Menu.buildFromTemplate(menu);
   //Menu.setApplicationMenu(mainMenu);
+
+  // Get public key
+  axios.get(publicKeyEndpoint).then(response => {
+    publicKey = response.data.publicKey;
+  }).catch(err => {
+    loginWindow.webContents.send('pubkey:failure', err);
+  });
   
   loginWindow = new BrowserWindow({
     title: 'Login',
@@ -216,25 +224,6 @@ const resetUser = (username, jwt, password) => {
   writeDatabase(database);
   return null;
 }
-
-/*
-const decodeJWT = (token) => {
-
-}
-
-const getPublicKey = (forced = false) => {
-  if (!publicKey || forced) {
-    axios.get(publicKeyEndpoint).then(response => {
-      publicKey = response.data.publicKey;
-
-    }).catch(err => {
-      loginWindow.webContents.send('register:failure', err);
-    });
-  } else {
-
-  }
-}
-*/
 
 // Encrypt text using key
 const encrypt = (text, key) => {

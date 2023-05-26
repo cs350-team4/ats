@@ -22,6 +22,10 @@ ipcRenderer.on('userlist:done', (options) => {
   document.body.style.display = "block";
 });
 
+ipcRenderer.on('pubkey:failure', (options) => {
+  console.log("failure: could not retrieve public key")
+});
+
 function addUser(username) {
   var userList = document.querySelector(".user-list");
   
