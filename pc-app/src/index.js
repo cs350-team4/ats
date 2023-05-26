@@ -3,19 +3,23 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 //process.env.NODE_ENV = 'production';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === "darwin";
-const algorithm = 'aes-256-ctr';
+const algorithm = 'aes-256-gcm';
+
+let publicKeyEndpoint = "http://127.0.0.1:8000/auth/publicKey";
+let loginWindow;
+let publicKey;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
-
-let loginWindow;
 
 // Create userlist window
 const createUserlistWindow = () => {
@@ -79,7 +83,6 @@ ipcMain.on('login:submit', (e, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
     loginWindow.webContents.send('login:success');
-    console.log(option);
   } else {
     loginWindow.webContents.send('login:failure', option);
   }
@@ -135,20 +138,17 @@ const addUser = (username, jwt, password) => {
     return 'User already exists';
   }
 
-  // Hash the password
-  hashed = bcrypt.hashSync(password, 10)
-
-  // Extract salt from hashed password
-  salt = hashed.split('$')[3].substr(0, 22);
+  // Generate salt
+  const salt = bcrypt.genSaltSync(10);
 
   // Generate key from password and salt
-  key = crypto.scryptSync(password, salt, 32);
+  const key = crypto.scryptSync(password, salt, 32);
 
   // Encrypt jwt
-  jwt = encrypt(jwt, key);
+  const {encrypted, iv, authTag} = encrypt(jwt, key);
 
   // Add the new user
-  const newUser = { username, jwt, 'password': hashed };
+  const newUser = { username, jwt: encrypted, iv, authTag, salt };
   database.users.push(newUser);
 
   // Write the updated database to the JSON file
@@ -170,21 +170,18 @@ const loginUser = (username, password) => {
     return {success: false, option: 'Invalid username'};
   }
 
-  // Check if the password is correct
-  if (!bcrypt.compareSync(password, user.password)) {
-    return {success: false, option: 'Invalid password'};
-  }
-
-  // Extract salt from the stored password
-  salt = user.password.split('$')[3].substr(0, 22)
-
   // Generate key from password and salt
-  key = crypto.scryptSync(password, salt, 32);
+  const key = crypto.scryptSync(password, user.salt, 32);
 
   // Decrypt jwt
-  jwt = decrypt(user.jwt, key);
+  const {success, option} = decrypt(user.jwt, user.iv, user.authTag, key);
+
+  // Check if the password is correct
+  if (!success) {
+    return {success: false, option: 'Invalid password'};
+  }
   
-  return {success: true, option: jwt};
+  return {success: true, option};
 }
 
 const resetUser = (username, jwt, password) => {
@@ -200,46 +197,66 @@ const resetUser = (username, jwt, password) => {
     return {success: false, option: 'Invalid username'};
   }
 
-  // Hash the password
-  hashed = bcrypt.hashSync(password, 10)
-
-  // Extract salt from hashed password
-  salt = hashed.split('$')[3].substr(0, 22);
+  // Generate salt
+  const salt = bcrypt.genSaltSync(10);
 
   // Generate key from password and salt
-  key = crypto.scryptSync(password, salt, 32);
+  const key = crypto.scryptSync(password, salt, 32);
 
   // Encrypt jwt
-  jwt = encrypt(jwt, key);
+  const {encrypted, iv, authTag} = encrypt(jwt, key);
 
-  // Reset the user
-  user.jwt = jwt;
-  user.password = hashed;
+  // Update the user
+  user.jwt = encrypted;
+  user.iv = iv;
+  user.authTag = authTag;
+  user.salt = salt;
 
   // Write the updated database to the JSON file
   writeDatabase(database);
   return null;
 }
 
-// Encrypt text using key
-function encrypt(text, key) {
-  let iv = crypto.randomBytes(16);
-  let cipher = crypto.createCipheriv(algorithm, key, iv);
-  let encrypted = cipher.update(text);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  return iv.toString('hex') + ':' + encrypted.toString('hex');
+/*
+const decodeJWT = (token) => {
+
 }
 
-// Decrypt text using key
-function decrypt(text, key) {
-  let textParts = text.split(':');
-  let iv = Buffer.from(textParts.shift(), 'hex');
-  let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-  let decipher = crypto.createDecipheriv(algorithm, key, iv);
-  let decrypted = decipher.update(encryptedText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
+const getPublicKey = (forced = false) => {
+  if (!publicKey || forced) {
+    axios.get(publicKeyEndpoint).then(response => {
+      publicKey = response.data.publicKey;
+
+    }).catch(err => {
+      loginWindow.webContents.send('register:failure', err);
+    });
+  } else {
+
+  }
 }
+*/
+
+// Encrypt text using key
+const encrypt = (text, key) => {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return {encrypted: (encrypted.toString('hex')), iv: (iv.toString('hex')), authTag: (cipher.getAuthTag().toString('hex'))};
+};
+
+// Decrypt text using iv, authTag, and key
+const decrypt = (encrypted, iv, authTag, key) => {
+  try {
+    const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
+    decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+    let decrypted = decipher.update(Buffer.from(encrypted, 'hex'));
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return { success: true, option: decrypted.toString('hex')};
+  } catch (error) {
+    return { success: false, option: error};
+  }
+};
 
 // App is ready
 app.on('ready', createUserlistWindow);
