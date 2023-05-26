@@ -1,0 +1,36 @@
+name: Check Frontend
+on: 
+  push:
+    branches: [master]
+    paths:
+      - 'pc-app/**'
+      - '.github/workflows/check-app.yml'
+  pull_request:
+    paths:
+      - 'pc-app/**'
+      - '.github/workflows/check-app.yml'
+
+# Only run against current ref: https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+          cache-dependency-path: pc-app/package-lock.json
+          
+      - name: Install Dependencies
+        working-directory: ./pc-app
+        run: npm install --ignore-scripts
+
+      - name: Run Lint
+        working-directory: ./pc-app
+        run: npm run lint
