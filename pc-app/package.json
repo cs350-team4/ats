@@ -16,7 +16,7 @@
     "name": "Amin Jalilov",
     "email": "aminkapkan444@gmail.com"
   },
-  "license": "GNU Affero General Public License v3.0",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
