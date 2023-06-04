@@ -2,8 +2,7 @@
 
 [![codecov](https://codecov.io/gh/cs350-team4/ats/branch/readme-license/graph/badge.svg?token=85WZ315QTS)](https://codecov.io/gh/cs350-team4/ats)
 ![python version 3.10][badge/python]
-[![black][badge/black]][repo/black]
-[![isort][badge/isort]][isort]
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.95.1-009688.svg?style=flat&logo=FastAPI&logoColor=white)](https://fastapi.tiangolo.com)
 [![License: AGPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
