@@ -15,6 +15,7 @@ const algorithm = 'aes-256-gcm';
 // Public key is hardcoded for testing reasons
 let publicKeyEndpoint = "http://127.0.0.1:8000/auth/publicKey";
 let loginWindow;
+let settingsWindow;
 let publicKey;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -27,7 +28,7 @@ const createUserlistWindow = () => {
 
   // Implement menu
   //const loginMenu = Menu.buildFromTemplate(menu);
-  //Menu.setApplicationMenu(mainMenu);
+  //Menu.setApplicationMenu(loginMenu);
 
   // Get public key
   axios.get(publicKeyEndpoint).then(response => {
@@ -54,31 +55,6 @@ const createUserlistWindow = () => {
     loginWindow.webContents.openDevTools();
   }
 };
-
-// Menu template
-/*
-const menu  = [
-  ...(isMac ? [{
-    label: app.name,
-    submenu: [
-      {
-        label: 'About',
-        click: createAboutWindow
-      }
-    ]
-  }] : []),
-  {
-    role: 'fileMenu'
-  },
-  ...(!isMac ? [{
-    label: 'Help',
-    submenu: [{
-      label: 'About',
-      click: createAboutWindow
-    }]
-  }] : [])
-]
-*/
 
 // Send all users to renderer
 ipcMain.on('userlist:get', (_err, _options) => {

@@ -123,6 +123,10 @@ function goToRegister() { // eslint-disable-line no-unused-vars
   window.location.href = `register.html`;
 }
 
+function goToSettings() { // eslint-disable-line no-unused-vars
+  window.location.href = `settings.html`;
+}
+
 function goToInterface() { // eslint-disable-line no-unused-vars
   window.location.href = `interface.html`;
 }
