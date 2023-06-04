@@ -1,18 +1,18 @@
 /*global ipcRenderer*/
 
-var urlParams = new URLSearchParams(window.location.search);
-var username = urlParams.get('username');
+const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get('username');
 
 document.addEventListener('DOMContentLoaded', function() {
   if (document.body.id === 'user-list-body') {
     ipcRenderer.send('userlist:get');
   }
   if (document.body.id === 'login-body') {
-    var loginHeader = document.getElementById('login-header');
+    const loginHeader = document.getElementById('login-header');
     loginHeader.textContent = 'Login as ' + username;
   }
   if (document.body.id === 'reset-body') {
-    var resetHeader = document.getElementById('reset-header');
+    const resetHeader = document.getElementById('reset-header');
     resetHeader.textContent = 'Reset ' + username;
   }
 });
@@ -29,24 +29,24 @@ ipcRenderer.on('pubkey:failure', (options) => {
 });
 
 function addUser(username) {
-  var userList = document.querySelector(".user-list");
+  const userList = document.querySelector(".user-list");
   
-  var userDiv = document.createElement("div");
+  const userDiv = document.createElement("div");
   userDiv.classList.add("user");
 
-  var usernameSpan = document.createElement("span");
+  const usernameSpan = document.createElement("span");
   usernameSpan.classList.add("username");
   usernameSpan.textContent = username;
 
-  var userButtonsDiv = document.createElement("div");
+  const userButtonsDiv = document.createElement("div");
   userButtonsDiv.classList.add("user-buttons");
 
-  var loginButton = document.createElement("button");
+  const loginButton = document.createElement("button");
   loginButton.classList.add("login");
   loginButton.textContent = "Login";
   loginButton.setAttribute("onclick", `goToLogin('${username}')`);
 
-  var resetButton = document.createElement("button");
+  const resetButton = document.createElement("button");
   resetButton.classList.add("reset");
   resetButton.textContent = "Reset";
   resetButton.setAttribute("onclick", `goToReset('${username}')`);
@@ -62,7 +62,7 @@ function addUser(username) {
 
 function handleLoginSubmit(event) { // eslint-disable-line no-unused-vars
   event.preventDefault();
-  var password = document.getElementById("password").value;
+  const password = document.getElementById("password").value;
   ipcRenderer.send('login:submit', {username, password});
 }
 
@@ -77,8 +77,8 @@ ipcRenderer.on('login:failure', (options) => {
 
 function handleResetSubmit(event) { // eslint-disable-line no-unused-vars
   event.preventDefault();
-  var jwt = document.getElementById("jwt").value;
-  var password = document.getElementById("password").value;
+  const jwt = document.getElementById("jwt").value;
+  const password = document.getElementById("password").value;
   ipcRenderer.send('reset:submit', {username, jwt, password});
 }
 
@@ -93,8 +93,8 @@ ipcRenderer.on('reset:failure', (options) => {
 
 function handleRegisterSubmit(event) { // eslint-disable-line no-unused-vars
   event.preventDefault();
-  var jwt = document.getElementById("jwt").value;
-  var password = document.getElementById("password").value;
+  const jwt = document.getElementById("jwt").value;
+  const password = document.getElementById("password").value;
   ipcRenderer.send('register:submit', {jwt, password});
 }
 
