@@ -145,11 +145,7 @@ export default [
     await delay(1000);
 
     // just check if the authentication header looks vaguely correct
-    if (
-      req.headers
-        .get("Authorization")
-        ?.indexOf("Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.")
-    ) {
+    if (req.headers.get("Authorization")?.indexOf("Bearer ey") !== -1) {
       // respond with random ticket count
       const ticketCount = Math.floor(Math.random() * (2000 - 1000) + 1000);
       return res(ctx.json({ tickets: ticketCount }));
@@ -183,11 +179,7 @@ export default [
     await delay(1000);
 
     // just check if the authentication header looks vaguely correct
-    if (
-      req.headers
-        .get("Authorization")
-        ?.indexOf("Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.")
-    ) {
+    if (req.headers.get("Authorization")?.indexOf("Bearer ey") !== -1) {
       const body: { prize_id: number } = await req.json();
       const prizeId = body.prize_id.toFixed();
 
