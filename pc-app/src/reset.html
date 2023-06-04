@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reset</title>
+  <link rel="stylesheet" type="text/css" href="css/login.css">
+  <script src="js/login.js" defer></script>
+</head>
+<body id="reset-body">
+  <div class="container">
+    <h2 id="reset-header">Reset</h2>
+    <form onsubmit="handleResetSubmit(event)">
+      <div class="form-group">
+        <label for="jwt">JWT:</label>
+        <input type="text" id="jwt" name="jwt" required>
+      </div>
+      <div class="form-group">
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="reset-button">Reset</button>
+      <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>
+    </form>
+  </div>
+</body>
+</html>
