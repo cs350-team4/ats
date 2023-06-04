@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 
