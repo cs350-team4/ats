@@ -128,3 +128,7 @@ jobs:
             ywQf75b9DbS/xm5f0z2COa9hQ8WgY6IxaQ==
             -----END EC PRIVATE KEY-----
 
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

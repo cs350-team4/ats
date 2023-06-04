@@ -16,4 +16,4 @@ def test_auth():
 
     generate_token_invalid(client, "aziz", "1")
     generate_token_invalid(client, "murad", "password")
-    generate_token_invalid(client, "jirawut", "' OR 1=1; --'")
+    generate_token_invalid(client, "jirawut", "' OR 1=1 ; --'")
