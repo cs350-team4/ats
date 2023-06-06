@@ -262,3 +262,58 @@ export const useAuthManagement = (): UseAuthManangementResult => {
     },
   };
 };
+
+/**
+ * Public API for UseAuthSetJWT
+ */
+export interface UseAuthSetJWT {
+  loginWithJWT: (jwt: string) => void;
+  logout: () => void;
+  // show error if set. no error if undefined
+  error?: Error;
+  clearError: () => void;
+}
+
+/**
+ * React hook for consumer of auth states
+ * This one is intended for components that sets JWT directly (i.e., PC app)
+ */
+export const useAuthSetJWT = (): UseAuthSetJWT => {
+  // error to be displayed on the UI
+  const [error, setError] = useState<Error>();
+  // access authstore
+  const authStore = useAuthStore((state) => state);
+
+  // this is the api exposed to the consumer
+  const loginWithJWT = (jwt: string) => {
+    try {
+      const payload = jose.decodeJwt(jwt);
+
+      authStore.setToken(jwt, {
+        name: (payload.name as string) ?? "",
+        sub: (payload.sub as UserClass) ?? UserClass.client,
+        iat: payload.iat ? new Date(payload.iat) : undefined,
+        exp: payload.exp ? new Date(payload.exp) : undefined,
+      });
+    } catch (err: unknown) {
+      // set error for ui to display
+      if (err instanceof Error) {
+        setError(err);
+      } else {
+        setError(new AuthenticationError("Unknown Error"));
+      }
+    }
+  };
+
+  // pack everything and send to consumer
+  return {
+    loginWithJWT,
+    logout: () => {
+      authStore.clear();
+    },
+    error,
+    clearError: () => {
+      setError(undefined);
+    },
+  };
+};
