@@ -24,7 +24,11 @@ const MgmtSidePanel: React.FC<{
       </Text>
       <Text>{auth.userClass}</Text>
 
-      <Button mt="md" onClick={() => setPage(Pages.MgmtPrize)}>
+      <Button
+        mt="md"
+        disabled={page === Pages.MgmtPrize}
+        onClick={() => setPage(Pages.MgmtPrize)}
+      >
         Manage Prize
       </Button>
 
