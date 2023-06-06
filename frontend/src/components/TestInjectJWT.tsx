@@ -20,7 +20,11 @@ const TestInjectJWT: React.FunctionComponent = () => {
     <>
       <Container size="xs">
         {/* Shows current JWT in read-only box */}
-        <Textarea label="Current JWT" value={auth ? auth.jwt : "Unset"} />
+        <Textarea
+          label="Current JWT"
+          readOnly
+          value={auth ? auth.jwt : "Unset"}
+        />
 
         {/* Form for setting JWT */}
         <form
