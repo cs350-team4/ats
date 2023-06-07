@@ -140,7 +140,7 @@ export const usePrizeList = () => {
   });
 };
 
-// Custom error for public key query
+// Custom error for coupon issue mutation
 export class CouponIssueError extends Error {
   httpCode?: number;
 
@@ -207,6 +207,142 @@ export const useCouponIssue = () => {
           });
         }
       }
+    },
+  });
+};
+
+/**
+ * Strip the data url prefix
+ * @param dataUrl base64 encoded data url
+ * @returns base64 encoded data
+ */
+const stripDataUrl = (dataUrl: string): string => {
+  return dataUrl.replace(/^data:(?:.*?),/, "");
+};
+
+// Custom error for prize update mutations
+export class PrizeUpdateError extends Error {
+  httpCode?: number;
+
+  constructor(message?: string, options?: ParseJsonErrOptions) {
+    super(message, options);
+    this.name = "Prize update error";
+    this.httpCode = options?.httpCode;
+  }
+}
+
+// Parameters for calling create prize mutation
+export interface CreatePrizeVariables {
+  jwt: string;
+  prize: Prize;
+}
+
+/**
+ * React hook for creating prize
+ */
+export const useCreatePrize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jwt, prize }: CreatePrizeVariables) => {
+      const res = await fetch(API_ROOT + "/prizes/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + jwt,
+        },
+        body: JSON.stringify({
+          name: prize.name,
+          stock: prize.stock,
+          price: prize.price,
+          description: prize.description,
+          image: stripDataUrl(prize.image),
+        }),
+      });
+
+      // ignore the return result as the entire prizeList will be refresh anyway
+      await parseJsonResponse(res, t.any, PrizeUpdateError);
+    },
+    onSettled: () => {
+      // refresh prize list
+      return queryClient.invalidateQueries({
+        queryKey: ["prizeList"],
+      });
+    },
+  });
+};
+
+// Parameters for calling patch prize mutation
+export interface PatchPrizeVariables {
+  jwt: string;
+  prize: Prize;
+}
+
+/**
+ * React hook for patching (update existing) prize
+ */
+export const usePatchPrize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jwt, prize }: PatchPrizeVariables) => {
+      const res = await fetch(API_ROOT + "/prizes/" + prize.id, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + jwt,
+        },
+        body: JSON.stringify({
+          name: prize.name,
+          stock: prize.stock,
+          price: prize.price,
+          description: prize.description,
+          image: stripDataUrl(prize.image),
+        }),
+      });
+
+      // ignore the return result as the entire prizeList will be refresh anyway
+      await parseJsonResponse(res, t.any, PrizeUpdateError);
+    },
+    onSettled: () => {
+      // refresh prize list
+      return queryClient.invalidateQueries({
+        queryKey: ["prizeList"],
+      });
+    },
+  });
+};
+
+// Parameters for calling delete prize mutation
+export interface DeletePrizeVariables {
+  jwt: string;
+  prizeId: string;
+}
+
+/**
+ * React hook for deleting prize
+ */
+export const useDeletePrize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ jwt, prizeId }: DeletePrizeVariables) => {
+      const res = await fetch(API_ROOT + "/prizes/" + prizeId, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + jwt,
+        },
+      });
+
+      // ignore the return result as the entire prizeList will be refresh anyway
+      await parseJsonResponse(res, t.any, PrizeUpdateError);
+    },
+    onSettled: () => {
+      // refresh prize list
+      return queryClient.invalidateQueries({
+        queryKey: ["prizeList"],
+      });
     },
   });
 };

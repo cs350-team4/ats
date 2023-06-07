@@ -175,6 +175,23 @@ export default [
     return res(ctx.json(PRIZE_LIST.concat(dynamicPrizeList)));
   }),
 
+  rest.post(API_ROOT + "/prizes/", async (req, res, ctx) => {
+    await delay(1000);
+    console.log(await req.json());
+    return res(ctx.json({}));
+  }),
+
+  rest.patch(API_ROOT + "/prizes/:id", async (req, res, ctx) => {
+    await delay(1000);
+    console.log(await req.json());
+    return res(ctx.json({}));
+  }),
+
+  rest.delete(API_ROOT + "/prizes/:id", async (req, res, ctx) => {
+    await delay(1000);
+    return res(ctx.json({}));
+  }),
+
   rest.post(API_ROOT + "/coupon/issue", async (req, res, ctx) => {
     await delay(1000);
 
