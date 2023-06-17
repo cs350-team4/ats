@@ -62,6 +62,7 @@ def update_prize(
         raise HTTPException(status_code=404, detail="Prize not found")
     return b64_encode(updated_prize)
 
+
 # TODO: Update SDD with new response model
 @router.delete("/{prize_id}", response_model=PrizeRead)
 def delete_prize(

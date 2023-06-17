@@ -5,11 +5,15 @@ from httpx import Response
 from pydantic import parse_obj_as
 
 from api.models import PrizeRead
+
 from .utils import load_image
 
 base64_image = load_image("./data/prize.png")
 
-def get_all_prizes(client: TestClient, start: Optional[int]=None, limit: Optional[int]=None) -> Response:
+
+def get_all_prizes(
+    client: TestClient, start: Optional[int] = None, limit: Optional[int] = None
+) -> Response:
     params = {}
     if start is not None:
         params["start"] = start
@@ -17,8 +21,10 @@ def get_all_prizes(client: TestClient, start: Optional[int]=None, limit: Optiona
         params["limit"] = limit
     return client.get("/prizes", params=params)
 
+
 def get_one_prize(client: TestClient, prize_id: int) -> Response:
     return client.get(f"/prizes/{prize_id}")
+
 
 def create_prize(
     client: TestClient,
@@ -41,15 +47,16 @@ def create_prize(
         headers={"Authorization": f"Bearer {staff_tok}"},
     )
 
+
 def update_prize(
     client: TestClient,
     staff_tok: str,
     prize_id: int,
-    name: Optional[str]=None,
-    stock: Optional[int]=None,
-    price: Optional[int]=None,
-    description: Optional[str]=None,
-    encoded_image: Optional[str]=None,
+    name: Optional[str] = None,
+    stock: Optional[int] = None,
+    price: Optional[int] = None,
+    description: Optional[str] = None,
+    encoded_image: Optional[str] = None,
 ) -> Response:
     payload = {
         "name": name,
@@ -67,20 +74,27 @@ def update_prize(
         headers={"Authorization": f"Bearer {staff_tok}"},
     )
 
+
 def delete_prize(client: TestClient, staff_token: str, prize_id: int) -> Response:
     return client.delete(
         f"/prizes/{prize_id}",
         headers={"Authorization": f"Bearer {staff_token}"},
     )
 
-def get_all_prizes_valid(client: TestClient, start: Optional[int]=None, limit: Optional[int]=None) -> list[PrizeRead]:
+
+def get_all_prizes_valid(
+    client: TestClient, start: Optional[int] = None, limit: Optional[int] = None
+) -> list[PrizeRead]:
     response = get_all_prizes(client, start, limit)
     assert response.status_code == 200, response.text
     data = response.json()
     assert limit is None or len(data) <= limit
     return parse_obj_as(list[PrizeRead], data)
 
-def get_all_prizes_invalid(client: TestClient, start: Optional[int]=None, limit: Optional[int]=None) -> int:
+
+def get_all_prizes_invalid(
+    client: TestClient, start: Optional[int] = None, limit: Optional[int] = None
+) -> int:
     response = get_all_prizes(client, start, limit)
     return response.status_code
 
@@ -91,6 +105,7 @@ def get_one_prize_valid(client: TestClient, prize_id: int) -> PrizeRead:
     data = response.json()
 
     return PrizeRead.parse_obj(data)
+
 
 def get_one_prize_invalid(client: TestClient, prize_id: int) -> int:
     response = client.get(f"/prizes/{prize_id}")
@@ -106,7 +121,9 @@ def create_prize_valid(
     description: str = "Lorem ipsum dolores",
     encoded_image: str = base64_image,
 ) -> PrizeRead:
-    response = create_prize(client, staff_tok, name, stock, price, description, encoded_image)
+    response = create_prize(
+        client, staff_tok, name, stock, price, description, encoded_image
+    )
     assert response.status_code == 200, response.text
 
     data = response.json()
@@ -119,6 +136,7 @@ def create_prize_valid(
     assert "id" in data
     return PrizeRead.parse_obj(data)
 
+
 def create_prize_invalid(
     client: TestClient,
     staff_tok: str,
@@ -128,8 +146,11 @@ def create_prize_invalid(
     description: str = "Lorem ipsum dolores",
     encoded_image: str = base64_image,
 ) -> int:
-    response = create_prize(client, staff_tok, name, stock, price, description, encoded_image)
+    response = create_prize(
+        client, staff_tok, name, stock, price, description, encoded_image
+    )
     return response.status_code
+
 
 def update_prize_valid(
     client: TestClient,
@@ -141,12 +162,15 @@ def update_prize_valid(
     description: str | None = None,
     encoded_image: str | None = None,
 ) -> PrizeRead:
-    response = update_prize(client, staff_token, prize_id, name, stock, price, description, encoded_image)
+    response = update_prize(
+        client, staff_token, prize_id, name, stock, price, description, encoded_image
+    )
     assert response.status_code == 200, response.text
 
     data = response.json()
     assert data["id"] == prize_id
     return PrizeRead.parse_obj(data)
+
 
 def update_prize_invalid(
     client: TestClient,
@@ -158,17 +182,22 @@ def update_prize_invalid(
     description: str | None = None,
     encoded_image: str | None = None,
 ) -> int:
-    response = update_prize(client, staff_token, prize_id, name, stock, price, description, encoded_image)
+    response = update_prize(
+        client, staff_token, prize_id, name, stock, price, description, encoded_image
+    )
     return response.status_code
 
 
-def delete_prize_valid(client: TestClient, staff_token: str, prize_id: int) -> PrizeRead:
+def delete_prize_valid(
+    client: TestClient, staff_token: str, prize_id: int
+) -> PrizeRead:
     response = delete_prize(client, staff_token, prize_id)
     assert response.status_code == 200, response.text
 
     data = response.json()
     assert data["id"] == prize_id
     return PrizeRead.parse_obj(data)
+
 
 def delete_prize_invalid(client: TestClient, staff_token: str, prize_id: int) -> int:
     response = delete_prize(client, staff_token, prize_id)
