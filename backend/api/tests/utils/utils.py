@@ -1,3 +1,4 @@
+import base64
 import random
 import string
 from datetime import datetime
@@ -13,3 +14,9 @@ def random_float() -> float:
 
 def seconds_since(date: datetime) -> float:
     return (datetime.now() - date).total_seconds()
+
+
+def load_image(image: str) -> str:
+    with open(image, "rb") as f:
+        cont = f.read()
+    return base64.b64encode(cont).decode("utf-8")

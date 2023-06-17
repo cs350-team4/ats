@@ -12,7 +12,7 @@ from .utils.coupon import (
     verify_coupon_valid,
 )
 from .utils.mock import client
-from .utils.prize import create_prize
+from .utils.prize import create_prize_valid
 from .utils.utils import seconds_since
 
 # user should have around 1000000 tickets
@@ -22,10 +22,10 @@ staff_tok = generate_staff_token()
 manager_tok = generate_manager_token()
 invalid_tok = "Not.A.token"
 
-prize = create_prize(client, manager_tok, price=1)
-prize_expensive = create_prize(client, manager_tok, price=1000000000)
+prize = create_prize_valid(client, manager_tok, price=1)
+prize_expensive = create_prize_valid(client, manager_tok, price=1000000000)
 
-prize_nostock = create_prize(client, manager_tok, stock=0)
+prize_nostock = create_prize_valid(client, manager_tok, stock=0)
 
 valid_serial = "0000000000"
 
