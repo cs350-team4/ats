@@ -1,4 +1,5 @@
 import base64
+import binascii
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -45,7 +46,10 @@ def create_prize(
     session: Session = Depends(GetSession(local_engine)),
     prize: PrizeCreate
 ):
-    db_prize = crud.create_prize(session, prize)
+    try:
+        db_prize = crud.create_prize(session, prize)
+    except binascii.Error:
+        raise HTTPException(status_code=422, detail="Incorrectly padded base64 string")
     return b64_encode(db_prize)
 
 
@@ -57,7 +61,11 @@ def update_prize(
     prize_id: int,
     prize: PrizeUpdate
 ):
-    updated_prize = crud.update_prize(session, prize_id, prize)
+    try:
+        updated_prize = crud.update_prize(session, prize_id, prize)
+    except binascii.Error:
+        raise HTTPException(status_code=422, detail="Incorrectly padded base64 string")
+
     if not updated_prize:
         raise HTTPException(status_code=404, detail="Prize not found")
     return b64_encode(updated_prize)
