@@ -1,5 +1,3 @@
-import pytest
-
 from .utils.auth import generate_manager_token, generate_staff_token, generate_token
 from .utils.coupon import (
     delete_coupon_invalid,
@@ -130,7 +128,6 @@ def test_delete_invalid_coupon():
     assert 404 == delete_coupon_invalid(client, staff_tok, valid_serial)
 
 
-@pytest.mark.skip(reason="TODO: Not implemented")
 def test_client2_delete_coupon():
     serial_number = issue_coupon_valid(client, client_tok, prize.id).serial_number
     assert 409 == delete_coupon_invalid(client, client2_tok, serial_number)

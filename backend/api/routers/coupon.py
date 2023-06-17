@@ -11,6 +11,9 @@ from api.utils import generate_serial
 
 router: APIRouter = APIRouter(tags=["coupon"])
 
+# idk if this is thread safe but idc
+recently_issued_coupons = {}
+
 
 @router.post("/issue", response_model=IssueCouponResponse)
 def issue_coupon(
@@ -52,6 +55,8 @@ def issue_coupon(
     )
     client_session.exec(update_tickets)  # type: ignore
     client_session.commit()
+
+    recently_issued_coupons[serial_num] = username
 
     return {"serial_number": serial_num}
 
@@ -104,13 +109,20 @@ def delete_coupon(
     if coupon.time_used is not None:
         raise HTTPException(status_code=409, detail="Coupon already used")
 
+    role = client_info.get("sub")
+    username = client_info["name"]
+    is_man = role not in ["manager", "exchange"]
+    is_client = role is None or role == "client"
+    if (is_client and recently_issued_coupons.get(serial_num) != username) or is_man:
+        raise HTTPException(status_code=409, detail="Authorization error")
+
     prize = local_session.get(Prize, coupon.prize_id)
     assert prize is not None
     local_session.delete(coupon)
     upstmt = (
         update(Client)  # type: ignore
         .values(ticket_num=Client.ticket_num + prize.price)
-        .where(Client.username == client_info["name"])
+        .where(Client.username == username)
     )
     client_session.exec(upstmt)  # type: ignore
     client_session.commit()
