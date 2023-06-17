@@ -60,9 +60,9 @@ class GameStateReset(GameStateBase):
 
 class PrizeBase(OwnedModel):
     name: str = Field(max_length=255)
-    stock: int
+    stock: conint(ge=0)  # type: ignore
     # TODO: change SDD output to price in API
-    price: int
+    price: conint(ge=0)  # type: ignore
     description: str
 
 
