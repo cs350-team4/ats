@@ -19,21 +19,27 @@ interface CouponUseVariables {
   serialNum: string;
 }
 
+interface Coupon {
+  time_used: null | string;
+}
 /**
  * Coupon validation page
  */
 const MgmtCoupon: React.FunctionComponent = () => {
   const auth = useAuth();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm({
     initialValues: {
       serialNum: "",
     },
   });
-  const { mutate: checkCoupon, status: couponStatus } = useMutation({
+  const { mutate: useCoupon, status: useCouponStatus } = useMutation({
     mutationFn: async ({ jwt, serialNum }: CouponUseVariables) => {
       setSuccessMessage(null);
+      setInfoMessage(null);
       const res = await fetch(API_ROOT + "/coupon/" + serialNum, {
         method: "PATCH",
         headers: {
@@ -58,6 +64,36 @@ const MgmtCoupon: React.FunctionComponent = () => {
     },
   });
 
+  const handleCheck = async () => {
+    setSuccessMessage(null);
+    form.setErrors({});
+    setIsLoading(true);
+    try {
+      if (!auth) throw Error("Must be authenticated");
+      const res = await fetch(API_ROOT + "/coupon/" + form.values.serialNum, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${auth?.jwt}`,
+        },
+      });
+      console.log(res);
+      if (res.status === 404) {
+        setInfoMessage("No such coupon");
+        setIsLoading(false);
+        return;
+      }
+      const data = (await res.json()) as Coupon;
+      if (data.time_used === null) {
+        setInfoMessage("Coupon not used");
+      } else {
+        setInfoMessage(`Coupon already used: ${data.time_used}`);
+      }
+    } catch (error) {
+      console.error("Error fetching coupon", error);
+    }
+    setIsLoading(false);
+  };
+
   if (!auth) {
     return (
       <Center>
@@ -67,7 +103,8 @@ const MgmtCoupon: React.FunctionComponent = () => {
   }
 
   const onSubmit = form.onSubmit((values) => {
-    checkCoupon({ jwt: auth.jwt, serialNum: values.serialNum });
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useCoupon({ jwt: auth.jwt, serialNum: values.serialNum });
   });
 
   return (
@@ -79,13 +116,28 @@ const MgmtCoupon: React.FunctionComponent = () => {
             {successMessage}
           </Text>
         )}
+        {!!infoMessage && (
+          <Text color="blue" size="xs" weight="bold">
+            {infoMessage}
+          </Text>
+        )}
 
         <Group grow mt="md">
-          {couponStatus === "loading" ? (
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+              <Button color="blue" radius="xl" onClick={handleCheck}>
+                check
+              </Button>
+            </>
+          )}
+          {useCouponStatus === "loading" ? (
             <Loader />
           ) : (
             <Button color="blue" radius="xl" type="submit">
-              Check
+              Use
             </Button>
           )}
         </Group>
