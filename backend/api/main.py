@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession
-from api.logs import LoggingMiddleware
+from api.logs import LoggingMiddleware, SecurityLog
 from api.models import Client, GenerateToken, OwnedModel
 from api.routers.coupon import router as coupon_router
 from api.routers.game import router as game_router
@@ -54,6 +54,7 @@ def generate_token(
     stmt = select(Client).where(Client.username == payload.username)
     result = session.exec(stmt).first()
     if result is None:
+        SecurityLog.warning(f"[{payload.username}] tried to login as non-existent user")
         raise HTTPException(status_code=403, detail="Authentication failed")
     if bcrypt.checkpw(payload.password.encode("utf8"), result.password.encode("utf8")):
         jwToken = jwt.encode(
@@ -61,8 +62,10 @@ def generate_token(
             settings.PRIVATE_KEY,
             algorithm="ES256",
         )
+        SecurityLog.info(f"[{result.username}] generated JWT successfully")
         return {"auth_token": jwToken}
     else:
+        SecurityLog.warning(f"[{result.username}] used wrong password")
         raise HTTPException(status_code=403, detail="Authentication failed")
 
 

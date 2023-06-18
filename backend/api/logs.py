@@ -25,6 +25,10 @@ HTTP_logger = logging.getLogger("http")
 HTTP_logger.setLevel(logging.INFO)
 HTTP_logger.addHandler(logging.FileHandler("./logs/http.log"))
 
+security_logger = logging.getLogger("security")
+security_logger.setLevel(logging.INFO)
+security_logger.addHandler(logging.FileHandler("./logs/security.log"))
+
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def set_body(self, request: Request):
@@ -82,3 +86,17 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         #     HTTP_logger.info(f"{time}:Response body: [empty]")
 
         return response
+
+
+class SecurityLog:
+    @staticmethod
+    def info(msg):
+        security_logger.info(f"INFO:{time_ns()}:{msg}")
+
+    @staticmethod
+    def warning(msg):
+        security_logger.warning(f"WARN:{time_ns()}:{msg}")
+
+    @staticmethod
+    def error(msg):
+        security_logger.error(f"ERROR:{time_ns()}:{msg}")
