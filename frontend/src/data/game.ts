@@ -69,16 +69,6 @@ export const useGameList = (jwt: string) => {
   });
 };
 
-// Custom error for coupon issue mutation
-export class CouponIssueError extends Error {
-  httpCode?: number;
-
-  constructor(message?: string, options?: ParseJsonErrOptions) {
-    super(message, options);
-    this.name = "Coupon issue error";
-    this.httpCode = options?.httpCode;
-  }
-}
 
 // Custom error for game update mutations
 export class GameUpdateError extends Error {
