@@ -4,6 +4,7 @@ import { API_ROOT } from "../global.config";
 import { rest } from "msw";
 import * as jose from "jose";
 import type { Prize } from "./prize";
+import type { Game } from "./game";
 
 // Public secp256r1 key. For testing purposes only.
 export const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
@@ -63,7 +64,7 @@ export const PRIZE_LIST: Prize[] = [
     name: "Vuxxi™ Exquisite Umbrella - Summer 2023 Limited Collection Edition by Alessandro Michele",
     stock: 1000,
     price: 100,
-    description: `The Vuxxi branded umbrella is a stunning accessory that effortlessly combines functionality with luxury. Crafted with the utmost attention to detail, it exemplifies Vuxxi's timeless elegance and iconic design aesthetic. 
+    description: `The Vuxxi branded umbrella is a stunning accessory that effortlessly combines functionality with luxury. Crafted with the utmost attention to detail, it exemplifies Vuxxi's timeless elegance and iconic design aesthetic.
 The umbrella features a sturdy and lightweight construction, ensuring durability and ease of use. Its large canopy provides ample coverage, shielding you from rain or harsh sunlight, while exuding a sense of sophistication. The fabric used is of the highest quality, offering excellent water resistance and UV protection.
 What sets the Vuxxi branded umbrella apart is its exquisite design. The canopy showcases Vuxxi's signature VX logo, intricately woven or printed onto the fabric, instantly recognizable to fashion enthusiasts. The brand's iconic motifs, such as the interlocking G pattern or the vibrant floral prints from the Vuxxi Garden collection, adorn the umbrella, making it a true statement piece.
 The handle of the umbrella is meticulously crafted, featuring luxurious materials like fine leather, polished metal, or even bamboo, depending on the specific design. The attention to detail extends to every aspect, including the smooth opening and closing mechanism, ensuring effortless operation.
@@ -87,6 +88,27 @@ Whether shielding you from the elements or simply adding a touch of opulence to 
     image: "https://placehold.jp/3d4070/ffffff/512x357.jpg",
   },
 ];
+
+const GAME_LIST: Game[] = [
+  {
+    id: "1",
+    name: "Game 1",
+    exchange_rate: 0.5,
+    password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw"
+  },
+  {
+    id: "2",
+    name: "Game 2",
+    exchange_rate: 2.5,
+    password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw"
+  },
+  {
+    id: "3",
+    name: "Game 3",
+    exchange_rate: 50,
+    password: "pwpwasdfpwpwpwpwpwpwpwpwpwpwpwpw"
+  },
+]
 
 /**
  * use to simulate delayed response
@@ -226,5 +248,38 @@ export default [
         ctx.json({ message: "Invalid authentication" })
       );
     }
+  }),
+
+  rest.get(API_ROOT + "/games", async (req, res, ctx) => {
+    await delay(1000);
+    const dynamicGameList: Game[] = [];
+    // set this to test for large prize list
+    for (let i = 0; i < 100; i++) {
+      const rn = Math.floor(Math.random() * (10 ** 8 - 1000) + 1000);
+      dynamicGameList.push({
+        id: rn.toFixed(),
+        name: `Item ${rn}`,
+        exchange_rate: 1.5,
+        password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
+      });
+    }
+    return res(ctx.json(GAME_LIST.concat(dynamicGameList)));
+  }),
+
+  rest.post(API_ROOT + "/games/", async (req, res, ctx) => {
+    await delay(1000);
+    console.log(await req.json());
+    return res(ctx.json({}));
+  }),
+
+  rest.patch(API_ROOT + "/games/:id", async (req, res, ctx) => {
+    await delay(1000);
+    console.log(await req.json());
+    return res(ctx.json({}));
+  }),
+
+  rest.delete(API_ROOT + "/games/:id", async (req, res, ctx) => {
+    await delay(1000);
+    return res(ctx.json({}));
   }),
 ];
