@@ -4,6 +4,10 @@ body {
     padding: 0;
     background-color: #f2f2f2;
 }
+
+#user-list-body {
+  display: none;
+}
   
 .container {
   max-width: 400px;
