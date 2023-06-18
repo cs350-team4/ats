@@ -64,6 +64,9 @@ ipcMain.on('login:submit', (_err, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
     mainWindow.loadURL(uiEndpoint);
+    mainWindow.webContents.once('did-finish-load', () => {
+      injectJWT(option);
+    });
   } else {
     mainWindow.webContents.send('login:failure', option);
   }
@@ -286,6 +289,26 @@ const resetUser = (username, jwt, password) => {
   return null;
 }
 
+const injectJWT = (jwtToken) => {
+  const script = `
+    const checkExist = setInterval(function() {
+      const textarea = document.querySelector('form textarea');
+      if (textarea) {
+          const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+          nativeInputValueSetter.call(textarea, '${jwtToken}');
+          const ev2 = new Event('input', { bubbles: true});
+          textarea.dispatchEvent(ev2);
+          const submitButton = document.querySelector('form button[type="submit"]');
+          if (submitButton) {
+            submitButton.click();
+            clearInterval(checkExist);
+          }
+      }
+    }, 10);
+  `;
+  mainWindow.webContents.executeJavaScript(script);
+};
+
 // Encrypt text using key
 const encrypt = (text, key) => {
   const iv = crypto.randomBytes(16);
@@ -302,7 +325,7 @@ const decrypt = (encrypted, iv, authTag, key) => {
     decipher.setAuthTag(Buffer.from(authTag, 'hex'));
     let decrypted = decipher.update(Buffer.from(encrypted, 'hex'));
     decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return { success: true, option: decrypted.toString('hex')};
+    return { success: true, option: decrypted};
   } catch (error) {
     return { success: false, option: error};
   }
