@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
   <link rel="stylesheet" type="text/css" href="css/login.css">
-  <script src="js/login.js"></script>
+  <script src="js/settings.js"></script>
 </head>
 <body id='settings-body'>
   <div class="container">
     <h2>Settings</h2>
     <p id="error-message" class="error-message"></p> 
-    <form onsubmit="handleSettingsSubmit(event)">
+    <form id="settings-form">
       <div class="form-group">
         <label for="publicKeyEndpoint">Public Key Endpoint:</label>
         <input type="text" id="publicKeyEndpoint" name="publicKeyEndpoint" spellcheck="false" required>
@@ -19,7 +20,7 @@
       </div>
       <button type="submit" class="apply-settings-button">Apply</button>
     </form>
-    <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>
+    <button type="button" class="back-button">Back to Users Page</button>
   </div>
 </body>
 </html>
