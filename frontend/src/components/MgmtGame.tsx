@@ -63,7 +63,7 @@ const MgmtGameBody: React.FC<{ auth: UseAuthResult }> = ({ auth }) => {
     return (
       <Center>
         <Flex mt="md" gap="md" direction="column">
-          <Text weight={700}>Error creating prize.</Text>
+          <Text weight={700}>Error creating game.</Text>
           <Text>
             {createGameError instanceof Error
               ? `${createGameError.name}: ${createGameError.message}`
@@ -78,7 +78,7 @@ const MgmtGameBody: React.FC<{ auth: UseAuthResult }> = ({ auth }) => {
     return (
       <Center>
         <Flex mt="md" gap="md" direction="column">
-          <Text weight={700}>Error updating prize.</Text>
+          <Text weight={700}>Error updating game.</Text>
           <Text>
             {patchGameError instanceof Error
               ? `${patchGameError.name}: ${patchGameError.message}`
@@ -93,7 +93,7 @@ const MgmtGameBody: React.FC<{ auth: UseAuthResult }> = ({ auth }) => {
     return (
       <Center>
         <Flex mt="md" gap="md" direction="column">
-          <Text weight={700}>Error deleting prize.</Text>
+          <Text weight={700}>Error deleting game.</Text>
           <Text>
             {deleteGameError instanceof Error
               ? `${deleteGameError.name}: ${deleteGameError.message}`
@@ -132,7 +132,7 @@ const MgmtGameBody: React.FC<{ auth: UseAuthResult }> = ({ auth }) => {
 };
 
 /**
- * Management page for prizes
+ * Management page for games
  */
 const MgmtGame: React.FunctionComponent = () => {
   const auth = useAuth();
