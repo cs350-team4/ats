@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
   <title>Login</title>
   <link rel="stylesheet" type="text/css" href="css/login.css">
   <script src="js/login.js" defer></script>
@@ -9,14 +10,14 @@
   <div class="container">
     <h2 id="login-header">Login</h2>
     <p id="error-message" class="error-message"></p> 
-    <form onsubmit="handleLoginSubmit(event)">
+    <form id="login-form">
       <div class="form-group">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <p id="error-message" class="error-message"></p> 
       </div>
       <button type="submit" class="login-button">Login</button>
-      <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>
+      <button type="button" class="back-button">Back to Users Page</button>
     </form>
   </div>
 </body>
