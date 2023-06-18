@@ -6,6 +6,7 @@ from sqlmodel import Session, update
 from api import crud
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession, ManagerBearer
+from api.logs import TransactionLog
 from api.models import (
     Client,
     GameCreate,
@@ -25,7 +26,7 @@ def create_game(
     *,
     _manager: Annotated[dict, Depends(ManagerBearer())],
     session: Session = Depends(GetSession(local_engine)),
-    game: GameCreate
+    game: GameCreate,
 ):
     return crud.create_game(session, game)
 
@@ -34,7 +35,7 @@ def create_game(
 def read_games(
     *,
     _manager: Annotated[dict, Depends(ManagerBearer())],
-    session: Session = Depends(GetSession(local_engine))
+    session: Session = Depends(GetSession(local_engine)),
 ):
     return crud.get_games(session)
 
@@ -44,7 +45,7 @@ def read_game(
     *,
     _manager: Annotated[dict, Depends(ManagerBearer())],
     session: Session = Depends(GetSession(local_engine)),
-    game_id: int
+    game_id: int,
 ):
     game = crud.get_game(session, game_id)
     if not game:
@@ -58,7 +59,7 @@ def update_game(
     _manager: Annotated[dict, Depends(ManagerBearer())],
     session: Session = Depends(GetSession(local_engine)),
     game_id: int,
-    game: GameUpdate
+    game: GameUpdate,
 ):
     updated_game = crud.update_game(session, game_id, game)
     if not updated_game:
@@ -71,7 +72,7 @@ def delete_game(
     *,
     _manager: Annotated[dict, Depends(ManagerBearer())],
     session: Session = Depends(GetSession(local_engine)),
-    game_id: int
+    game_id: int,
 ):
     deleted_game = crud.delete_game(session, game_id)
     if not deleted_game:
@@ -109,7 +110,7 @@ def end_game(
     *,
     client_session: Session = Depends(GetSession(client_engine)),
     session: Session = Depends(GetSession(local_engine)),
-    payload: GameStateEnd
+    payload: GameStateEnd,
 ):
     user = decode_jwt(payload.client_token)
     if not user:
@@ -136,6 +137,9 @@ def end_game(
     )
     client_session.exec(stmt)  # type: ignore
     client_session.commit()
+    TransactionLog.ticket(
+        f"User [{user['name']}] got [{tickets}] tickets from game [{game.id}]"
+    )
 
     active_games.pop(game.id)
 

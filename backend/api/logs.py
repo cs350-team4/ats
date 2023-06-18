@@ -25,6 +25,10 @@ HTTP_logger = logging.getLogger("http")
 HTTP_logger.setLevel(logging.INFO)
 HTTP_logger.addHandler(logging.FileHandler("./logs/http.log"))
 
+transaction_logger = logging.getLogger("transaction")
+transaction_logger.setLevel(logging.INFO)
+transaction_logger.addHandler(logging.FileHandler("./logs/transaction.log"))
+
 security_logger = logging.getLogger("security")
 security_logger.setLevel(logging.INFO)
 security_logger.addHandler(logging.FileHandler("./logs/security.log"))
@@ -86,6 +90,16 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         #     HTTP_logger.info(f"{time}:Response body: [empty]")
 
         return response
+
+
+class TransactionLog:
+    @staticmethod
+    def ticket(msg):
+        transaction_logger.info(f"TICKET:{time_ns()}:{msg}")
+
+    @staticmethod
+    def coupon(msg):
+        transaction_logger.info(f"COUPON:{time_ns()}:{msg}")
 
 
 class SecurityLog:
