@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="css/interface.css">
-  <script src="js/interface.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/login.css">
+  <script src="js/login.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>Settings</h1>
+    <h2>Settings</h2>
+    <form onsubmit="handleSettingsSubmit(event)">
+      <div class="form-group">
+        <label for="pubkeyend">Public Key Endpoint:</label>
+        <input type="text" id="pubkeyend" name="pubkeyend" required>
+      </div>
+        <div class="form-group">
+          <label for="uiend">UI Endpoint:</label>
+          <input type="text" id="uiend" name="uiend" required>
+        </div>
+        <button type="submit" class="register-button">Apply</button>
+    </form>
+    <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>
   </div>
 </body>
 </html>
