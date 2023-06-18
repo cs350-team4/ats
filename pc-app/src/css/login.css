@@ -1,8 +1,11 @@
+* {
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+}
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f2f2f2;
+    background-color: #fff
 }
 
 #user-list-body {
@@ -27,6 +30,8 @@ h2 {
 
 .user-list {
   margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .user {
@@ -34,7 +39,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: #fff;;
   border-radius: 3px;
   margin-bottom: 10px;
 }
@@ -50,14 +55,32 @@ h2 {
   border-radius: 3px;
   cursor: pointer;
   margin-left: 5px;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
 .user-buttons button.login {
-  background-color: #4caf50;
+  background-color: #40c057;
+  border-radius: 2rem;
+  height: 2.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+button.login:hover {
+  background-color: #37b24d;
 }
 
 .user-buttons button.reset {
-  background-color: #ff9800;
+  background-color: #fa5252;
+  border-radius: 2rem;
+  height: 2.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+button.reset:hover {
+  background-color: #f03e3e;
 }
 
 form {
@@ -73,17 +96,6 @@ label {
   font-weight: bold;
 }  
 
-.add-user-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #2196f3;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
 input[type="text"],
 input[type="password"] {
   padding: 10px;
@@ -93,30 +105,29 @@ input[type="password"] {
   box-sizing: border-box; /* Include padding and border in the width calculation */
 }
 
+button:hover {
+  background-color: #1c7ed6;
+}
+
 .login-button,
 .reset-button,
 .register-button,
-.apply-settings-button {
-  padding: 10px;
-  background-color: #2196f3;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
+.apply-settings-button,
 .settings-button,
-.back-button {
+.back-button,
+.add-user-button {
   padding: 10px;
-  background-color: #ccc;
+  background-color: #228be6;
   color: #fff;
   border: none;
-  border-radius: 3px;
   cursor: pointer;
+  border-radius: 2rem;
+  height: 2.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
   margin-top: 10px;
 }
 
-.error-message {
-  color: red;
+.message {
   margin-top: 5px;
 }
