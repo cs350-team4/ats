@@ -72,11 +72,11 @@ ipcMain.on('login:submit', (_err, options) => {
 ipcMain.on('reset:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'jwt verification failed');
+      loginWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     } 
     if (options.username !== decoded.name) {
-      loginWindow.webContents.send('register:failure', 'jwt does not belong to this user');
+      loginWindow.webContents.send('register:failure', 'JWT does not belong to this user');
       return;
     }
     err = resetUser(decoded.name, options.jwt, options.password);
@@ -92,7 +92,7 @@ ipcMain.on('reset:submit', (_err, options) => {
 ipcMain.on('register:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'jwt verification failed');
+      loginWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     }
     err = addUser(decoded.name, options.jwt, options.password);
@@ -130,7 +130,7 @@ const readDatabase = () => {
     const database = fs.readFileSync(path.join(__dirname, 'users.json'));
     return JSON.parse(database);
   } catch (error) {
-    console.error('Error reading the database: ', error);
+    console.error('error while reading the database: ', error);
     return { users: [] };
   }
 }
@@ -140,7 +140,7 @@ const writeDatabase = (database) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(database, null, 2));
   } catch (error) {
-    console.error('Error writing to the database: ', error);
+    console.error('error while writing to the database: ', error);
   }
 }
 
@@ -175,7 +175,7 @@ const updateSettings = () => {
     publicKey = response.data.publicKey;
     loginWindow.webContents.send('settings:success');
   }).catch(_err => {
-    loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
+    loginWindow.webContents.send('settings:failure', 'could not retrieve public key');
   });
 }
 
@@ -218,7 +218,7 @@ const loginUser = (username, password) => {
 
   // Check if the user exists
   if (!user) {
-    return {success: false, option: 'Invalid username'};
+    return {success: false, option: 'invalid username'};
   }
 
   // Generate key from password and salt
@@ -229,7 +229,7 @@ const loginUser = (username, password) => {
 
   // Check if the password is correct
   if (!success) {
-    return {success: false, option: 'Invalid password'};
+    return {success: false, option: 'invalid password'};
   }
   
   return {success: true, option};
@@ -245,7 +245,7 @@ const resetUser = (username, jwt, password) => {
 
   // Check if the user exists
   if (!user) {
-    return {success: false, option: 'Invalid username'};
+    return {success: false, option: 'invalid username'};
   }
 
   // Generate salt
