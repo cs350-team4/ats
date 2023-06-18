@@ -3,7 +3,6 @@ import {
   Text,
   Container,
   Group,
-  Image,
   NativeSelect,
   Box,
   useMantineTheme,
@@ -39,7 +38,7 @@ export interface MgmtGameDisplayProps {
  * A component to display individual item.
  */
 const MgmtGameDisplay: React.FC<MgmtGameDisplayProps> = ({
-  game: { id: gameId, name, password, exchange_rate },
+  game: { id: gameId, name, exchangeRate },
   onEdit,
   onRemove,
 }) => {
@@ -47,7 +46,6 @@ const MgmtGameDisplay: React.FC<MgmtGameDisplayProps> = ({
     <>
       {/* The display card */}
       <Card shadow="md" padding="md" radius="md" h="100%" withBorder>
-
         <Flex
           mt="md"
           gap="md"
@@ -60,7 +58,7 @@ const MgmtGameDisplay: React.FC<MgmtGameDisplayProps> = ({
               {name}
             </Text>
 
-            <Text>Exchange rate: {exchange_rate}</Text>
+            <Text>Exchange rate: {exchangeRate}</Text>
             <Text>Password: ***</Text>
           </Flex>
 
@@ -139,10 +137,10 @@ const MgmtGameList: React.FC<MgmtGameListProps> = ({
         filteredGames.sort((lhs, rhs) => rhs.name.localeCompare(lhs.name));
         break;
       case "Excahnge Rate (Low-High)":
-        filteredGames.sort((lhs, rhs) => lhs.exchange_rate - rhs.exchange_rate);
+        filteredGames.sort((lhs, rhs) => lhs.exchangeRate - rhs.exchangeRate);
         break;
       case "Exchange Rate (High-Low)":
-        filteredGames.sort((lhs, rhs) => rhs.exchange_rate - lhs.exchange_rate);
+        filteredGames.sort((lhs, rhs) => rhs.exchangeRate - lhs.exchangeRate);
         break;
     }
 
@@ -175,7 +173,7 @@ const MgmtGameList: React.FC<MgmtGameListProps> = ({
     setTargetItem({
       id: "-1",
       name: "",
-      exchange_rate: 0.0,
+      exchangeRate: 0.0,
       password: "",
     });
   };

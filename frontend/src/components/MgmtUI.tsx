@@ -66,11 +66,10 @@ const MgmtUI: React.FunctionComponent = () => {
 
   let pageComponent;
   if (page === Pages.MgmtGame) {
-    pageComponent = <MgmtGame />
+    pageComponent = <MgmtGame />;
   } else {
-    pageComponent = <MgmtPrize />
+    pageComponent = <MgmtPrize />;
   }
-
 
   return (
     <GlobalWrapper>

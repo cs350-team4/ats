@@ -93,22 +93,22 @@ const GAME_LIST: Game[] = [
   {
     id: "1",
     name: "Game 1",
-    exchange_rate: 0.5,
-    password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw"
+    exchangeRate: 0.5,
+    password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
   },
   {
     id: "2",
     name: "Game 2",
-    exchange_rate: 2.5,
-    password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw"
+    exchangeRate: 2.5,
+    password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
   },
   {
     id: "3",
     name: "Game 3",
-    exchange_rate: 50,
-    password: "pwpwasdfpwpwpwpwpwpwpwpwpwpwpwpw"
+    exchangeRate: 50,
+    password: "pwpwasdfpwpwpwpwpwpwpwpwpwpwpwpw",
   },
-]
+];
 
 /**
  * use to simulate delayed response
@@ -259,7 +259,7 @@ export default [
       dynamicGameList.push({
         id: rn.toFixed(),
         name: `Item ${rn}`,
-        exchange_rate: 1.5,
+        exchangeRate: 1.5,
         password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
       });
     }

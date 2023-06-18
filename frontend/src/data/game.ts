@@ -10,7 +10,7 @@ import { ParseJsonErrOptions, parseJsonResponse } from "./utils";
 export interface Game {
   id: string;
   name: string;
-  exchange_rate: number;
+  exchangeRate: number;
   password: string;
 }
 
@@ -24,8 +24,8 @@ export class GameListQueryError extends Error {
 
 export interface GameListVariables {
   meta: {
-    jwt: string
-  }
+    jwt: string;
+  };
 }
 
 /**
@@ -38,13 +38,11 @@ export const useGameList = (jwt: string) => {
     staleTime: GAME_LIST_STALE_TIME,
     queryFn: async (): Promise<Game[]> => {
       // get current ticket from server
-      const res = await fetch(
-        API_ROOT + "/games/", {
-          headers: {
-            Authorization: "Bearer " + jwt,
-          }
-        }
-      );
+      const res = await fetch(API_ROOT + "/games/", {
+        headers: {
+          Authorization: "Bearer " + jwt,
+        },
+      });
 
       const data = await parseJsonResponse(
         res,
@@ -63,7 +61,7 @@ export const useGameList = (jwt: string) => {
         return {
           id: typeof item.id === "number" ? item.id.toFixed() : item.id,
           name: item.name,
-          exchange_rate: item.exchange_rate,
+          exchangeRate: item.exchange_rate,
           password: item.password,
         };
       });
@@ -116,7 +114,7 @@ export const useCreateGame = () => {
         body: JSON.stringify({
           name: game.name,
           password: game.password,
-          exchange_rate: game.exchange_rate,
+          exchange_rate: game.exchangeRate,
         }),
       });
 
@@ -146,18 +144,17 @@ export const usePatchGame = () => {
 
   return useMutation({
     mutationFn: async ({ jwt, game }: PatchGameVariables) => {
-      const req_body = JSON.stringify({
-          name: game.name,
-          password: game.password,
-          exchange_rate: game.exchange_rate,
-        });
       const res = await fetch(API_ROOT + "/games/" + game.id, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + jwt,
         },
-        body: req_body,
+        body: JSON.stringify({
+          name: game.name,
+          password: game.password,
+          exchange_rate: game.exchangeRate,
+        }),
       });
 
       // ignore the return result as the entire gameList will be refresh anyway

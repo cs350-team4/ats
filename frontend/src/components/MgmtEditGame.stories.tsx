@@ -9,7 +9,7 @@ const meta = {
     initialGame: {
       id: "5555",
       name: "Item Name",
-      exchange_rate: 1.5,
+      exchangeRate: 1.5,
       password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
     },
   },
