@@ -6,6 +6,7 @@ from sqlmodel import Session, insert, select, update
 
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession, JWTBearer, StaffBearer
+from api.logs import TransactionLog
 from api.models import Client, Coupon, IssueCouponPayload, IssueCouponResponse, Prize
 from api.utils import generate_serial
 
@@ -56,6 +57,10 @@ def issue_coupon(
     client_session.commit()
 
     recently_issued_coupons[serial_num] = username
+    TransactionLog.coupon(
+        f"User [{username}] got coupon [{serial_num}] for [{prize.price}] "
+        f"tickets for prize [{prize.id}]"
+    )
 
     return {"serial_number": serial_num}
 
@@ -89,6 +94,7 @@ def use_coupon(
     session.add(coupon)
     session.commit()
     session.refresh(coupon)
+    TransactionLog.coupon(f"Staff [{staff_info['name']}] used coupon [{serial_num}]")
 
     return Response(status_code=200)
 
@@ -129,5 +135,6 @@ def delete_coupon(
 
     local_session.delete(coupon)
     local_session.commit()
+    TransactionLog.coupon(f"User [{username}] deleted coupon [{serial_num}]")
 
     return Response(status_code=200)
