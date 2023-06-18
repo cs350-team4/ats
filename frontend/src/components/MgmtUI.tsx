@@ -5,9 +5,11 @@ import { useAuth, useAuthSetJWT, UseAuthResult } from "../data/auth";
 import GlobalWrapper from "./GlobalWrapper";
 import TestInjectJWT from "./TestInjectJWT";
 import MgmtPrize from "./MgmtPrize";
+import MgmtGame from "./MgmtGame";
 
 enum Pages {
   MgmtPrize,
+  MgmtGame,
 }
 
 const MgmtSidePanel: React.FC<{
@@ -29,7 +31,15 @@ const MgmtSidePanel: React.FC<{
         disabled={page === Pages.MgmtPrize}
         onClick={() => setPage(Pages.MgmtPrize)}
       >
-        Manage Prize
+        Manage Prizes
+      </Button>
+
+      <Button
+        mt="md"
+        disabled={page === Pages.MgmtGame}
+        onClick={() => setPage(Pages.MgmtGame)}
+      >
+        Manage Games
       </Button>
 
       <Button color="red" mt="md" onClick={logout}>
@@ -54,6 +64,14 @@ const MgmtUI: React.FunctionComponent = () => {
     );
   }
 
+  let pageComponent;
+  if (page === Pages.MgmtGame) {
+    pageComponent = <MgmtGame />
+  } else {
+    pageComponent = <MgmtPrize />
+  }
+
+
   return (
     <GlobalWrapper>
       <AppShell
@@ -64,7 +82,7 @@ const MgmtUI: React.FunctionComponent = () => {
           </Navbar>
         }
       >
-        {page === Pages.MgmtPrize ? <MgmtPrize /> : <></>}
+        {pageComponent}
       </AppShell>
     </GlobalWrapper>
   );
