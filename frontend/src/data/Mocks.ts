@@ -255,6 +255,30 @@ export default [
     }
   }),
 
+  rest.patch(API_ROOT + "/coupon/:id", async (req, res, ctx) => {
+    await delay(1000);
+
+    if (req.headers.get("Authorization")?.indexOf("Bearer ey") !== -1) {
+      const id = req.params.id;
+      if (typeof id === "object") {
+        return res(ctx.status(404));
+      }
+
+      if (id.startsWith("999")) {
+        return res(ctx.status(409));
+      } else if (id.startsWith("444")) {
+        return res(ctx.status(404));
+      } else {
+        return res(ctx.status(200));
+      }
+    } else {
+      return res(
+        ctx.status(403),
+        ctx.json({ message: "Invalid authentication" })
+      );
+    }
+  }),
+
   rest.get(API_ROOT + "/games", async (req, res, ctx) => {
     await delay(1000);
     const dynamicGameList: MockGame[] = [];
