@@ -14,8 +14,8 @@ const algorithm = 'aes-256-gcm';
 
 // Public key is hardcoded for testing reasons
 let publicKeyEndpoint;
-//let uiEndpoint;
-let loginWindow;
+let uiEndpoint;
+let mainWindow;
 let publicKey;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -26,13 +26,9 @@ if (require('electron-squirrel-startup')) {
 // Create userlist window
 const createUserlistWindow = () => {
 
-  // Set
   Menu.setApplicationMenu(menu)
-
-  // Set settings
-  updateSettings();
   
-  loginWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     title: 'Login',
     width: isDev ? 1000 : 500,
     height: 600,
@@ -43,27 +39,32 @@ const createUserlistWindow = () => {
     },
   });
 
-  loginWindow.loadFile(path.join(__dirname, 'userlist.html'));
+  mainWindow.loadFile(path.join(__dirname, 'userlist.html'));
 
-  // Open devtools if in dev env
   if (isDev) {
-    loginWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
+
+  mainWindow.maximize();
 };
 
-// Send all users to renderer
+// Update settings and send all users to renderer
 ipcMain.on('userlist:get', (_err, _options) => {
+  updateSettings();
   const database = readDatabase();
-  loginWindow.webContents.send('userlist:done', database);
+  mainWindow.webContents.send('userlist:done', database);
 });
 
 // Handle login
 ipcMain.on('login:submit', (_err, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
-    loginWindow.webContents.send('login:success');
+    mainWindow.loadURL(uiEndpoint);
+    mainWindow.webContents.once('did-finish-load', () => {
+      injectJWT(option);
+    });
   } else {
-    loginWindow.webContents.send('login:failure', option);
+    mainWindow.webContents.send('login:failure', option);
   }
 });
 
@@ -71,18 +72,18 @@ ipcMain.on('login:submit', (_err, options) => {
 ipcMain.on('reset:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'JWT verification failed');
+      mainWindow.webContents.send('reset:failure', 'JWT verification failed');
       return;
     } 
     if (options.username !== decoded.name) {
-      loginWindow.webContents.send('register:failure', 'JWT does not belong to this user');
+      mainWindow.webContents.send('reset:failure', 'JWT does not belong to this user');
       return;
     }
     err = resetUser(decoded.name, options.jwt, options.password);
     if (!err) {
-      loginWindow.webContents.send('register:success');
+      mainWindow.webContents.send('reset:success');
     } else {
-      loginWindow.webContents.send('register:failure', err);
+      mainWindow.webContents.send('reset:failure', err);
     }
   });
 });
@@ -91,14 +92,14 @@ ipcMain.on('reset:submit', (_err, options) => {
 ipcMain.on('register:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'JWT verification failed');
+      mainWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     }
     err = addUser(decoded.name, options.jwt, options.password);
     if (!err) {
-      loginWindow.webContents.send('register:success');
+      mainWindow.webContents.send('register:success');
     } else {
-      loginWindow.webContents.send('register:failure', err);
+      mainWindow.webContents.send('register:failure', err);
     }
   });
 });
@@ -106,7 +107,7 @@ ipcMain.on('register:submit', (_err, options) => {
 // Send settings to renderer
 ipcMain.on('settings:get', (_err, _options) => {
   const settings = readSettings();
-  loginWindow.webContents.send('settings:done', settings);
+  mainWindow.webContents.send('settings:done', settings);
 });
 
 // Handle settings change
@@ -119,14 +120,14 @@ ipcMain.on('settings:submit', (_err, options) => {
     });
     updateSettings();
   } catch (error) {
-    loginWindow.webContents.send('settings:failure', error);
+    mainWindow.webContents.send('settings:failure', error);
   }
 });
 
 // Read the users.json file
 const readDatabase = () => {
   
-  // Create Database if doesn't exist
+  // Create database if doesn't exist
   if (!fs.existsSync(path.join(__dirname, 'users.json'))) {
     writeDatabase({
       "users": []
@@ -154,7 +155,7 @@ const writeDatabase = (database) => {
 // Read the settings.json file
 const readSettings = () => {
   
-  // Create Settings if doesn't exist
+  // Create settings if doesn't exist
   if (!fs.existsSync(path.join(__dirname, 'settings.json'))) {
     writeSettings({ 
       "publicKeyEndpoint": "", 
@@ -185,13 +186,13 @@ const updateSettings = () => {
   const settings = readSettings();
 
   publicKeyEndpoint = settings.publicKeyEndpoint;
-  //uiEndpoint = settings.uiEndpoint;
+  uiEndpoint = settings.uiEndpoint;
 
   axios.get(publicKeyEndpoint).then(response => {
     publicKey = response.data.publicKey;
-    loginWindow.webContents.send('settings:success');
+    mainWindow.webContents.send('settings:success');
   }).catch(_err => {
-    loginWindow.webContents.send('settings:failure', 'could not retrieve public key');
+    mainWindow.webContents.send('settings:failure', 'could not retrieve public key');
   });
 }
 
@@ -202,7 +203,7 @@ const addUser = (username, jwt, password) => {
   // Check if the username already exists
   const userExists = database.users.some((user) => user.username === username);
   if (userExists) {
-    return 'User already exists';
+    return 'user already exists';
   }
 
   // Generate salt
@@ -284,6 +285,27 @@ const resetUser = (username, jwt, password) => {
   return null;
 }
 
+// Inject JWT in frontend UI
+const injectJWT = (jwtToken) => {
+  const script = `
+    const checkExist = setInterval(function() {
+      const textarea = document.querySelector('form textarea');
+      if (textarea) {
+          const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+          nativeInputValueSetter.call(textarea, '${jwtToken}');
+          const ev2 = new Event('input', { bubbles: true});
+          textarea.dispatchEvent(ev2);
+          const submitButton = document.querySelector('form button[type="submit"]');
+          if (submitButton) {
+            submitButton.click();
+            clearInterval(checkExist);
+          }
+      }
+    }, 10);
+  `;
+  mainWindow.webContents.executeJavaScript(script);
+};
+
 // Encrypt text using key
 const encrypt = (text, key) => {
   const iv = crypto.randomBytes(16);
@@ -300,7 +322,7 @@ const decrypt = (encrypted, iv, authTag, key) => {
     decipher.setAuthTag(Buffer.from(authTag, 'hex'));
     let decrypted = decipher.update(Buffer.from(encrypted, 'hex'));
     decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return { success: true, option: decrypted.toString('hex')};
+    return { success: true, option: decrypted};
   } catch (error) {
     return { success: false, option: error};
   }
@@ -309,9 +331,8 @@ const decrypt = (encrypted, iv, authTag, key) => {
 const menu = Menu.buildFromTemplate([
   {
     label: 'Exit to Main Menu',
-      click: function(){
-        app.relaunch()
-        app.exit()
+      click: () => {
+        mainWindow.loadFile(path.join(__dirname, 'userlist.html'));
       }
   }
 ]);

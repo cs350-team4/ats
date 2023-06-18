@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
   <title>Login</title>
   <link rel="stylesheet" type="text/css" href="css/login.css">
-  <script src="js/login.js" defer></script>
+  <script src="js/userlist.js" defer></script>
 </head>
-<body id='user-list-body' style='display:none'>
+<body id='user-list-body'>
   <div class="container">
     <h2>Login</h2>
     <p id="error-message" class="error-message"></p> 
@@ -21,8 +22,8 @@
       Add more user entries here
       -->
     </div>
-    <button type="button" class="add-user-button" onclick="goToRegister()">Add New User</button>
-    <button type="button" class="settings-button" onclick="goToSettings()">Settings</button>
+    <button type="button" class="add-user-button">Add New User</button>
+    <button type="button" class="settings-button">Settings</button>
   </div>
 </body>
 </html>

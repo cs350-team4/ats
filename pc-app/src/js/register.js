@@ -1,20 +1,20 @@
 /*global ipcRenderer*/
 
-const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get('username');
-
 document.addEventListener('DOMContentLoaded', function() {
-  const loginHeader = document.getElementById('login-header');
-  loginHeader.textContent = `Login as ${username}`;
-
-  document.getElementById('login-form').addEventListener('submit', (event) => { // eslint-disable-line no-unused-vars
+  document.getElementById('register-form').addEventListener('submit', (event) => { // eslint-disable-line no-unused-vars
     event.preventDefault();
+    const jwt = document.getElementById("jwt").value;
     const password = document.getElementById("password").value;
-    ipcRenderer.send('login:submit', {username, password});
+    ipcRenderer.send('register:submit', {jwt, password});
   });
 });
 
-ipcRenderer.on('login:failure', (options) => {
+ipcRenderer.on('register:success', (_options) => {
+  window.location.href = `userlist.html`;
+  console.log("success");
+});
+
+ipcRenderer.on('register:failure', (options) => {
   sendError(`Failure: ${options}`);
 });
 

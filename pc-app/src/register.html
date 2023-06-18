@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
   <title>Add New User</title>
   <link rel="stylesheet" type="text/css" href="css/login.css">
-  <script src="js/login.js" defer></script>
+  <script src="js/register.js" defer></script>
 </head>
 <body>
   <div class="container">
     <h2 id="register-header">Add New User</h2>
     <p id="error-message" class="error-message"></p> 
-    <form onsubmit="handleRegisterSubmit(event)">
+    <form id="register-form">
       <div class="form-group">
         <label for="jwt">JWT:</label>
         <input type="text" id="jwt" name="jwt" spellcheck="false" required>
@@ -19,7 +20,7 @@
         <input type="password" id="password" name="password" required>
       </div>
       <button type="submit" class="register-button">Add New User</button>
-      <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>
+      <button type="button" class="back-button">Back to Users Page</button>
     </form>
   </div>
 </body>
