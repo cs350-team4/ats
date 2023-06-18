@@ -4,7 +4,6 @@ import { API_ROOT } from "../global.config";
 import { rest } from "msw";
 import * as jose from "jose";
 import type { Prize } from "./prize";
-import type { Game } from "./game";
 
 // Public secp256r1 key. For testing purposes only.
 export const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
@@ -89,23 +88,29 @@ Whether shielding you from the elements or simply adding a touch of opulence to 
   },
 ];
 
-const GAME_LIST: Game[] = [
+type MockGame = {
+  id: string;
+  name: string;
+  exchange_rate: number;
+  password: string;
+};
+const GAME_LIST: MockGame[] = [
   {
     id: "1",
     name: "Game 1",
-    exchangeRate: 0.5,
+    exchange_rate: 0.5,
     password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
   },
   {
     id: "2",
     name: "Game 2",
-    exchangeRate: 2.5,
+    exchange_rate: 2.5,
     password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
   },
   {
     id: "3",
     name: "Game 3",
-    exchangeRate: 50,
+    exchange_rate: 50,
     password: "pwpwasdfpwpwpwpwpwpwpwpwpwpwpwpw",
   },
 ];
@@ -252,14 +257,14 @@ export default [
 
   rest.get(API_ROOT + "/games", async (req, res, ctx) => {
     await delay(1000);
-    const dynamicGameList: Game[] = [];
+    const dynamicGameList: MockGame[] = [];
     // set this to test for large prize list
     for (let i = 0; i < 100; i++) {
       const rn = Math.floor(Math.random() * (10 ** 8 - 1000) + 1000);
       dynamicGameList.push({
         id: rn.toFixed(),
         name: `Item ${rn}`,
-        exchangeRate: 1.5,
+        exchange_rate: 1.5,
         password: "pwpwpwpwpwpwpwpwpwpwpwpwpwpwpwpw",
       });
     }
