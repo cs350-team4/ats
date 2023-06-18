@@ -13,7 +13,8 @@ const isMac = process.platform === "darwin";
 const algorithm = 'aes-256-gcm';
 
 // Public key is hardcoded for testing reasons
-let publicKeyEndpoint = "http://127.0.0.1:8000/auth/publicKey";
+let publicKeyEndpoint;
+let uiEndpoint;
 let loginWindow;
 let publicKey;
 
@@ -29,12 +30,8 @@ const createUserlistWindow = () => {
   //const loginMenu = Menu.buildFromTemplate(menu);
   //Menu.setApplicationMenu(loginMenu);
 
-  // Get public key
-  axios.get(publicKeyEndpoint).then(response => {
-    publicKey = response.data.publicKey;
-  }).catch(_err => {
-    loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
-  });
+  // Set settings
+  updateSettings();
   
   loginWindow = new BrowserWindow({
     title: 'Login',
@@ -120,7 +117,8 @@ ipcMain.on('settings:submit', (_err, options) => {
       "publicKeyEndpoint": options.publicKeyEndpoint,
       "uiEndpoint": options.uiEndpoint
     };
-    updateSettings(settings);
+    writeSettings(settings);
+    updateSettings();
     loginWindow.webContents.send('settings:success');
   } catch (error) {
     loginWindow.webContents.send('settings:failure', error);
@@ -150,21 +148,35 @@ const writeDatabase = (database) => {
 // Read the settings.json file
 const readSettings = () => {
   try {
-    const data = fs.readFileSync(path.join(__dirname, 'settings.json'));
-    return JSON.parse(data);
+    const settings = fs.readFileSync(path.join(__dirname, 'settings.json'));
+    return JSON.parse(settings);
   } catch (error) {
     console.error('Error reading settings: ', error);
     return { settings: [] };
   }
 }
 
-// Update the settings.json file
-const updateSettings = (settings) => {
+// Write the settings.json file
+const writeSettings = (settings) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, 2));
   } catch (error) {
-    console.error('Error updating settings: ', error);
+    console.error('Error writing settings: ', error);
   }
+}
+
+// Write the settings.json file
+const updateSettings = () => {
+  const settings = readSettings();
+
+  publicKeyEndpoint = settings.publicKeyEndpoint;
+  uiEndpoint = settings.uiEndpoint;
+
+  axios.get(publicKeyEndpoint).then(response => {
+    publicKey = response.data.publicKey;
+  }).catch(_err => {
+    loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
+  });
 }
 
 // Add a new user
