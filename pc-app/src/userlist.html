@@ -8,6 +8,7 @@
 <body id='user-list-body' style='display:none'>
   <div class="container">
     <h2>Login</h2>
+    <p id="error-message" class="error-message"></p> 
     <div class="user-list">
       <!--
       <div class="user">
@@ -20,7 +21,8 @@
       Add more user entries here
       -->
     </div>
-    <button class="add-user-button" onclick="goToRegister()">Add New User</button>
+    <button type="button" class="add-user-button" onclick="goToRegister()">Add New User</button>
+    <button type="button" class="settings-button" onclick="goToSettings()">Settings</button>
   </div>
 </body>
 </html>

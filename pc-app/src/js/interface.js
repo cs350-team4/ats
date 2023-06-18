@@ -1,12 +1,12 @@
-window.onload = function() {
+window.onload = () => {
     var iframe = document.getElementById('emulated-website');
     var frameContainer = document.getElementById('frame-container');
     
-    function resizeIframe() {
+    const resizeIframe = () => {
       iframe.style.height = frameContainer.offsetHeight + 'px';
     }
     
-    window.onresize = function() {
+    window.onresize = () => {
       resizeIframe();
     };
     

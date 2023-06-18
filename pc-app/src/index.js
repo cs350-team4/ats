@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, Menu, ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -13,7 +13,8 @@ const isMac = process.platform === "darwin";
 const algorithm = 'aes-256-gcm';
 
 // Public key is hardcoded for testing reasons
-let publicKeyEndpoint = "http://127.0.0.1:8000/auth/publicKey";
+let publicKeyEndpoint;
+//let uiEndpoint;
 let loginWindow;
 let publicKey;
 
@@ -25,16 +26,11 @@ if (require('electron-squirrel-startup')) {
 // Create userlist window
 const createUserlistWindow = () => {
 
-  // Implement menu
-  //const loginMenu = Menu.buildFromTemplate(menu);
-  //Menu.setApplicationMenu(mainMenu);
+  // Set
+  Menu.setApplicationMenu(menu)
 
-  // Get public key
-  axios.get(publicKeyEndpoint).then(response => {
-    publicKey = response.data.publicKey;
-  }).catch(_err => {
-    loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
-  });
+  // Set settings
+  updateSettings();
   
   loginWindow = new BrowserWindow({
     title: 'Login',
@@ -55,38 +51,13 @@ const createUserlistWindow = () => {
   }
 };
 
-// Menu template
-/*
-const menu  = [
-  ...(isMac ? [{
-    label: app.name,
-    submenu: [
-      {
-        label: 'About',
-        click: createAboutWindow
-      }
-    ]
-  }] : []),
-  {
-    role: 'fileMenu'
-  },
-  ...(!isMac ? [{
-    label: 'Help',
-    submenu: [{
-      label: 'About',
-      click: createAboutWindow
-    }]
-  }] : [])
-]
-*/
-
 // Send all users to renderer
 ipcMain.on('userlist:get', (_err, _options) => {
   const database = readDatabase();
   loginWindow.webContents.send('userlist:done', database);
 });
 
-// Handle loggin
+// Handle login
 ipcMain.on('login:submit', (_err, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
@@ -100,11 +71,11 @@ ipcMain.on('login:submit', (_err, options) => {
 ipcMain.on('reset:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'jwt verification failed');
+      loginWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     } 
     if (options.username !== decoded.name) {
-      loginWindow.webContents.send('register:failure', 'jwt does not belong to this user');
+      loginWindow.webContents.send('register:failure', 'JWT does not belong to this user');
       return;
     }
     err = resetUser(decoded.name, options.jwt, options.password);
@@ -120,7 +91,7 @@ ipcMain.on('reset:submit', (_err, options) => {
 ipcMain.on('register:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'jwt verification failed');
+      loginWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     }
     err = addUser(decoded.name, options.jwt, options.password);
@@ -132,24 +103,96 @@ ipcMain.on('register:submit', (_err, options) => {
   });
 });
 
-// Read the JSON file
+// Send settings to renderer
+ipcMain.on('settings:get', (_err, _options) => {
+  const settings = readSettings();
+  loginWindow.webContents.send('settings:done', settings);
+});
+
+// Handle settings change
+ipcMain.on('settings:submit', (_err, options) => {
+  try {
+
+    writeSettings({
+      "publicKeyEndpoint": options.publicKeyEndpoint,
+      "uiEndpoint": options.uiEndpoint
+    });
+    updateSettings();
+  } catch (error) {
+    loginWindow.webContents.send('settings:failure', error);
+  }
+});
+
+// Read the users.json file
 const readDatabase = () => {
+  
+  // Create Database if doesn't exist
+  if (!fs.existsSync(path.join(__dirname, 'users.json'))) {
+    writeDatabase({
+      "users": []
+    });
+  }
+  
   try {
     const database = fs.readFileSync(path.join(__dirname, 'users.json'));
     return JSON.parse(database);
   } catch (error) {
-    console.error('Error reading the database: ', error);
+    console.error('Error while reading the database: ', error);
     return { users: [] };
   }
 }
 
-// Write to the JSON file
+// Write to the users.json file
 const writeDatabase = (database) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(database, null, 2));
   } catch (error) {
-    console.error('Error writing to the database: ', error);
+    console.error('Error while writing to the database: ', error);
   }
+}
+
+// Read the settings.json file
+const readSettings = () => {
+  
+  // Create Settings if doesn't exist
+  if (!fs.existsSync(path.join(__dirname, 'settings.json'))) {
+    writeSettings({ 
+      "publicKeyEndpoint": "", 
+      "uiEndpoint": "" 
+    });
+  }
+  
+  try {
+    const settings = fs.readFileSync(path.join(__dirname, 'settings.json'));
+    return JSON.parse(settings);
+  } catch (error) {
+    console.error('Error while reading settings: ', error);
+    return { settings: [] };
+  }
+}
+
+// Write the settings.json file
+const writeSettings = (settings) => {
+  try {
+    fs.writeFileSync(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, 2));
+  } catch (error) {
+    console.error('Error while writing settings: ', error);
+  }
+}
+
+// Write the settings.json file
+const updateSettings = () => {
+  const settings = readSettings();
+
+  publicKeyEndpoint = settings.publicKeyEndpoint;
+  //uiEndpoint = settings.uiEndpoint;
+
+  axios.get(publicKeyEndpoint).then(response => {
+    publicKey = response.data.publicKey;
+    loginWindow.webContents.send('settings:success');
+  }).catch(_err => {
+    loginWindow.webContents.send('settings:failure', 'could not retrieve public key');
+  });
 }
 
 // Add a new user
@@ -191,7 +234,7 @@ const loginUser = (username, password) => {
 
   // Check if the user exists
   if (!user) {
-    return {success: false, option: 'Invalid username'};
+    return {success: false, option: 'invalid username'};
   }
 
   // Generate key from password and salt
@@ -202,7 +245,7 @@ const loginUser = (username, password) => {
 
   // Check if the password is correct
   if (!success) {
-    return {success: false, option: 'Invalid password'};
+    return {success: false, option: 'invalid password'};
   }
   
   return {success: true, option};
@@ -218,7 +261,7 @@ const resetUser = (username, jwt, password) => {
 
   // Check if the user exists
   if (!user) {
-    return {success: false, option: 'Invalid username'};
+    return {success: false, option: 'invalid username'};
   }
 
   // Generate salt
@@ -262,6 +305,16 @@ const decrypt = (encrypted, iv, authTag, key) => {
     return { success: false, option: error};
   }
 };
+
+const menu = Menu.buildFromTemplate([
+  {
+    label: 'Exit to Main Menu',
+      click: function(){
+        app.relaunch()
+        app.exit()
+      }
+  }
+]);
 
 // App is ready
 app.on('ready', createUserlistWindow);

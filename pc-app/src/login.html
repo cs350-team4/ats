@@ -8,10 +8,12 @@
 <body id="login-body">
   <div class="container">
     <h2 id="login-header">Login</h2>
+    <p id="error-message" class="error-message"></p> 
     <form onsubmit="handleLoginSubmit(event)">
       <div class="form-group">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
+        <p id="error-message" class="error-message"></p> 
       </div>
       <button type="submit" class="login-button">Login</button>
       <button type="button" class="back-button" onclick="goToUserlist()">Back to Users Page</button>

@@ -9,11 +9,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   if (document.body.id === 'login-body') {
     const loginHeader = document.getElementById('login-header');
-    loginHeader.textContent = 'Login as ' + username;
+    loginHeader.textContent = `Login as ${username}`;
   }
   if (document.body.id === 'reset-body') {
     const resetHeader = document.getElementById('reset-header');
-    resetHeader.textContent = 'Reset ' + username;
+    resetHeader.textContent = `Reset ${username}`;
+  }
+  if (document.body.id === 'settings-body') {
+    ipcRenderer.send('settings:get');
   }
 });
 
@@ -24,11 +27,15 @@ ipcRenderer.on('userlist:done', (options) => {
   document.body.style.display = "block";
 });
 
-ipcRenderer.on('pubkey:failure', (options) => {
-  console.log('failure: ', options)
+ipcRenderer.on('settings:done', (options) => {
+  const publicKeyEndpointButton = document.getElementById("publicKeyEndpoint");
+  const uiEndpointButton = document.getElementById("uiEndpoint");
+  publicKeyEndpointButton.value = options.publicKeyEndpoint;
+  uiEndpointButton.value = options.uiEndpoint;
+  document.body.style.display = "block";
 });
 
-function addUser(username) {
+const addUser = (username) => {
   const userList = document.querySelector(".user-list");
   
   const userDiv = document.createElement("div");
@@ -60,7 +67,7 @@ function addUser(username) {
   userList.appendChild(userDiv);
 }
 
-function handleLoginSubmit(event) { // eslint-disable-line no-unused-vars
+const handleLoginSubmit = (event) => { // eslint-disable-line no-unused-vars
   event.preventDefault();
   const password = document.getElementById("password").value;
   ipcRenderer.send('login:submit', {username, password});
@@ -72,10 +79,10 @@ ipcRenderer.on('login:success', (_options) => {
 });
 
 ipcRenderer.on('login:failure', (options) => {
-  console.log("failure: ", options);
+  sendError(`Failure: ${options}`);
 });
 
-function handleResetSubmit(event) { // eslint-disable-line no-unused-vars
+const handleResetSubmit = (event) => { // eslint-disable-line no-unused-vars
   event.preventDefault();
   const jwt = document.getElementById("jwt").value;
   const password = document.getElementById("password").value;
@@ -88,10 +95,10 @@ ipcRenderer.on('reset:success', (_options) => {
 });
 
 ipcRenderer.on('reset:failure', (options) => {
-  console.log("failure: ", options);
+  sendError(`Failure: ${options}`);
 });
 
-function handleRegisterSubmit(event) { // eslint-disable-line no-unused-vars
+const handleRegisterSubmit = (event) => { // eslint-disable-line no-unused-vars
   event.preventDefault();
   const jwt = document.getElementById("jwt").value;
   const password = document.getElementById("password").value;
@@ -104,25 +111,55 @@ ipcRenderer.on('register:success', (_options) => {
 });
 
 ipcRenderer.on('register:failure', (options) => {
-  console.log("failure: ", options);
+  sendError(`Failure: ${options}`);
 });
 
-function goToUserlist() { // eslint-disable-line no-unused-vars
-  window.location.href = 'userlist.html';
+const handleSettingsSubmit = (event) => { // eslint-disable-line no-unused-vars
+  event.preventDefault();
+  const publicKeyEndpoint = document.getElementById("publicKeyEndpoint").value;
+  const uiEndpoint = document.getElementById("uiEndpoint").value;
+  ipcRenderer.send('settings:submit', {publicKeyEndpoint, uiEndpoint});
 }
 
-function goToLogin(username) { // eslint-disable-line no-unused-vars
+ipcRenderer.on('settings:success', (_options) => {
+  nullError();
+  console.log("success");
+});
+
+ipcRenderer.on('settings:failure', (options) => {
+  sendError(`Failure: ${options}`);
+});
+
+const sendError = (error) => {
+  const errorMessage = document.getElementById("error-message");
+  errorMessage.textContent = error;
+}
+
+const nullError = () => {
+  const errorMessage = document.getElementById("error-message");
+  errorMessage.textContent = null;
+}
+
+const goToUserlist = () => { // eslint-disable-line no-unused-vars
+  window.location.href = `userlist.html`;
+}
+
+const goToLogin = (username) => { // eslint-disable-line no-unused-vars
   window.location.href = `login.html?username=${username}`;
 }
 
-function goToReset(username) { // eslint-disable-line no-unused-vars
+const goToReset = (username) => { // eslint-disable-line no-unused-vars
   window.location.href = `reset.html?username=${username}`;
 }
 
-function goToRegister() { // eslint-disable-line no-unused-vars
+const goToRegister = () => { // eslint-disable-line no-unused-vars
   window.location.href = `register.html`;
 }
 
-function goToInterface() { // eslint-disable-line no-unused-vars
+const goToSettings = () => { // eslint-disable-line no-unused-vars
+  window.location.href = `settings.html`;
+}
+
+const goToInterface = () => { // eslint-disable-line no-unused-vars
   window.location.href = `interface.html`;
 }

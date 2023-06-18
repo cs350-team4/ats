@@ -8,10 +8,11 @@
 <body>
   <div class="container">
     <h2 id="register-header">Add New User</h2>
+    <p id="error-message" class="error-message"></p> 
     <form onsubmit="handleRegisterSubmit(event)">
       <div class="form-group">
         <label for="jwt">JWT:</label>
-        <input type="text" id="jwt" name="jwt" required>
+        <input type="text" id="jwt" name="jwt" spellcheck="false" required>
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
