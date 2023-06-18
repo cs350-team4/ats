@@ -15,12 +15,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const resetHeader = document.getElementById('reset-header');
     resetHeader.textContent = 'Reset ' + username;
   }
+  if (document.body.id === 'settings-body') {
+    ipcRenderer.send('settings:get');
+  }
 });
 
 ipcRenderer.on('userlist:done', (options) => {
   for (const user of options.users) {
     addUser(user.username);
   }
+  document.body.style.display = "block";
+});
+
+ipcRenderer.on('settings:done', (options) => {
+  const publicKeyEndpointButton = document.getElementById("publicKeyEndpoint");
+  const uiEndpointButton = document.getElementById("uiEndpoint");
+  publicKeyEndpointButton.value = options.publicKeyEndpoint;
+  uiEndpointButton.value = options.uiEndpoint;
   document.body.style.display = "block";
 });
 
@@ -104,6 +115,22 @@ ipcRenderer.on('register:success', (_options) => {
 });
 
 ipcRenderer.on('register:failure', (options) => {
+  console.log("failure: ", options);
+});
+
+function handleSettingsSubmit(event) { // eslint-disable-line no-unused-vars
+  event.preventDefault();
+  const publicKeyEndpoint = document.getElementById("publicKeyEndpoint").value;
+  const uiEndpoint = document.getElementById("uiEndpoint").value;
+  ipcRenderer.send('settings:submit', {publicKeyEndpoint, uiEndpoint});
+}
+
+ipcRenderer.on('settings:success', (_options) => {
+  goToUserlist();
+  console.log("success");
+});
+
+ipcRenderer.on('settings:failure', (options) => {
   console.log("failure: ", options);
 });
 
