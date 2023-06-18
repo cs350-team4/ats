@@ -23,11 +23,6 @@ const sendError = (error) => {
   errorMessage.textContent = error;
 }
 
-const nullError = () => {
-  const errorMessage = document.getElementById("error-message");
-  errorMessage.textContent = null;
-}
-
 document.querySelector('.back-button').addEventListener('click', (_event) => { // eslint-disable-line no-unused-vars
   window.location.href = `userlist.html`;
 });
