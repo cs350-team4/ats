@@ -166,7 +166,7 @@ const readSettings = () => {
     const settings = fs.readFileSync(path.join(__dirname, 'settings.json'));
     return JSON.parse(settings);
   } catch (error) {
-    console.error('Error reading settings: ', error);
+    console.error('error while reading settings: ', error);
     return { settings: [] };
   }
 }
@@ -176,7 +176,7 @@ const writeSettings = (settings) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, 2));
   } catch (error) {
-    console.error('Error writing settings: ', error);
+    console.error('error while writing settings: ', error);
   }
 }
 

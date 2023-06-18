@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   if (document.body.id === 'login-body') {
     const loginHeader = document.getElementById('login-header');
-    loginHeader.textContent = 'Login as ' + username;
+    loginHeader.textContent = `Login as ${username}`;
   }
   if (document.body.id === 'reset-body') {
     const resetHeader = document.getElementById('reset-header');
-    resetHeader.textContent = 'Reset ' + username;
+    resetHeader.textContent = `Reset ${username}`;
   }
   if (document.body.id === 'settings-body') {
     ipcRenderer.send('settings:get');
@@ -79,7 +79,7 @@ ipcRenderer.on('login:success', (_options) => {
 });
 
 ipcRenderer.on('login:failure', (options) => {
-  sendError("Failure: " + options);
+  sendError(`Failure: ${options}`);
 });
 
 const handleResetSubmit = (event) => { // eslint-disable-line no-unused-vars
@@ -95,7 +95,7 @@ ipcRenderer.on('reset:success', (_options) => {
 });
 
 ipcRenderer.on('reset:failure', (options) => {
-  sendError("Failure: " + options);
+  sendError(`Failure: ${options}`);
 });
 
 const handleRegisterSubmit = (event) => { // eslint-disable-line no-unused-vars
@@ -111,7 +111,7 @@ ipcRenderer.on('register:success', (_options) => {
 });
 
 ipcRenderer.on('register:failure', (options) => {
-  sendError("Failure: " + options);
+  sendError(`Failure: ${options}`);
 });
 
 const handleSettingsSubmit = (event) => { // eslint-disable-line no-unused-vars
@@ -127,7 +127,7 @@ ipcRenderer.on('settings:success', (_options) => {
 });
 
 ipcRenderer.on('settings:failure', (options) => {
-  sendError("Failure: " + options);
+  sendError(`Failure: ${options}`);
 });
 
 const sendError = (error) => {
@@ -141,7 +141,7 @@ const nullError = () => {
 }
 
 const goToUserlist = () => { // eslint-disable-line no-unused-vars
-  window.location.href = 'userlist.html';
+  window.location.href = `userlist.html`;
 }
 
 const goToLogin = (username) => { // eslint-disable-line no-unused-vars
