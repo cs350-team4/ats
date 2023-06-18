@@ -137,7 +137,7 @@ const readDatabase = () => {
     const database = fs.readFileSync(path.join(__dirname, 'users.json'));
     return JSON.parse(database);
   } catch (error) {
-    console.error('error while reading the database: ', error);
+    console.error('Error while reading the database: ', error);
     return { users: [] };
   }
 }
@@ -147,7 +147,7 @@ const writeDatabase = (database) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(database, null, 2));
   } catch (error) {
-    console.error('error while writing to the database: ', error);
+    console.error('Error while writing to the database: ', error);
   }
 }
 
@@ -166,7 +166,7 @@ const readSettings = () => {
     const settings = fs.readFileSync(path.join(__dirname, 'settings.json'));
     return JSON.parse(settings);
   } catch (error) {
-    console.error('error while reading settings: ', error);
+    console.error('Error while reading settings: ', error);
     return { settings: [] };
   }
 }
@@ -176,7 +176,7 @@ const writeSettings = (settings) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, 2));
   } catch (error) {
-    console.error('error while writing settings: ', error);
+    console.error('Error while writing settings: ', error);
   }
 }
 
