@@ -126,7 +126,6 @@ function handleSettingsSubmit(event) { // eslint-disable-line no-unused-vars
 }
 
 ipcRenderer.on('settings:success', (_options) => {
-  goToUserlist();
   console.log("success");
 });
 
