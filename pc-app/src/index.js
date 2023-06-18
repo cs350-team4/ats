@@ -202,7 +202,7 @@ const addUser = (username, jwt, password) => {
   // Check if the username already exists
   const userExists = database.users.some((user) => user.username === username);
   if (userExists) {
-    return 'User already exists';
+    return 'user already exists';
   }
 
   // Generate salt
