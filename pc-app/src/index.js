@@ -119,7 +119,6 @@ ipcMain.on('settings:submit', (_err, options) => {
     };
     writeSettings(settings);
     updateSettings();
-    loginWindow.webContents.send('settings:success');
   } catch (error) {
     loginWindow.webContents.send('settings:failure', error);
   }
@@ -174,6 +173,7 @@ const updateSettings = () => {
 
   axios.get(publicKeyEndpoint).then(response => {
     publicKey = response.data.publicKey;
+    loginWindow.webContents.send('settings:success');
   }).catch(_err => {
     loginWindow.webContents.send('pubkey:failure', 'could not retrieve public key');
   });
