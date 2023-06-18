@@ -109,9 +109,11 @@ def delete_coupon(
 
     role = client_info.get("sub")
     username = client_info["name"]
-    is_man = role not in ["manager", "exchange"]
+    is_staff = role in ["manager", "exchange"]
     is_client = role is None or role == "client"
-    if (is_client and recently_issued_coupons.get(serial_num) != username) or is_man:
+    if (
+        is_client and recently_issued_coupons.get(serial_num) != username
+    ) or not is_staff:
         raise HTTPException(status_code=409, detail="Authorization error")
 
     prize = local_session.get(Prize, coupon.prize_id)
