@@ -66,6 +66,7 @@ const MgmtCoupon: React.FunctionComponent = () => {
 
   const handleCheck = async () => {
     setSuccessMessage(null);
+    setInfoMessage(null);
     form.setErrors({});
     setIsLoading(true);
     try {
@@ -78,7 +79,7 @@ const MgmtCoupon: React.FunctionComponent = () => {
       });
       console.log(res);
       if (res.status === 404) {
-        setInfoMessage("No such coupon");
+        form.setFieldError("serialNum", "No such coupon");
         setIsLoading(false);
         return;
       }
@@ -86,7 +87,7 @@ const MgmtCoupon: React.FunctionComponent = () => {
       if (data.time_used === null) {
         setInfoMessage("Coupon not used");
       } else {
-        setInfoMessage(`Coupon already used: ${data.time_used}`);
+        form.setFieldError("serialNum", "Coupon already used");
       }
     } catch (error) {
       console.error("Error fetching coupon", error);
@@ -112,12 +113,12 @@ const MgmtCoupon: React.FunctionComponent = () => {
       <form onSubmit={onSubmit}>
         <TextInput label="Serial number" {...form.getInputProps("serialNum")} />
         {!!successMessage && (
-          <Text color="green" size="xs" weight="bold">
+          <Text color="green" size="xs">
             {successMessage}
           </Text>
         )}
         {!!infoMessage && (
-          <Text color="blue" size="xs" weight="bold">
+          <Text color="blue" size="xs">
             {infoMessage}
           </Text>
         )}
@@ -129,7 +130,7 @@ const MgmtCoupon: React.FunctionComponent = () => {
             <>
               {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
               <Button color="blue" radius="xl" onClick={handleCheck}>
-                check
+                Check
               </Button>
             </>
           )}
