@@ -25,20 +25,28 @@ ipcRenderer.on('settings:done', (options) => {
 
 
 ipcRenderer.on('settings:success', (_options) => {
-  nullError();
-  console.log("success");
+  nullMessage();
+  setTimeout(() => { sendSuccess("Applied"); }, 100);
 });
 
 ipcRenderer.on('settings:failure', (options) => {
-  sendError(`Failure: ${options}`);
+  nullMessage();
+  setTimeout(() => { sendError(`Failure: ${options}`); }, 100);
 });
 
 const sendError = (error) => {
-  const errorMessage = document.getElementById("error-message");
-  errorMessage.textContent = error;
+  const message = document.getElementById("message");
+  message.style.color = '#ff0000';
+  message.textContent = error;
 }
 
-const nullError = () => {
-  const errorMessage = document.getElementById("error-message");
-  errorMessage.textContent = null;
+const sendSuccess = (error) => {
+  const message = document.getElementById("message");
+  message.style.color = '#008000';
+  message.textContent = error;
+}
+
+const nullMessage = () => {
+  const message = document.getElementById("message");
+  message.textContent = null;
 }
