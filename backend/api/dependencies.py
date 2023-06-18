@@ -44,7 +44,7 @@ class JWTBearer(HTTPBearer):
                 )
                 raise HTTPException(status_code=403, detail="Invalid authentication.")
             SecurityLog.info(
-                f"[{jwt.get('name', None)}] logined successfully using JWT [{jwt.get('sub', None)}]"
+                f"[{jwt.get('name', None)}] logged in successfully with JWT[{jwt.get('sub', None)}]"
             )
             return jwt
         else:
