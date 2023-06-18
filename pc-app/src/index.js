@@ -14,7 +14,7 @@ const algorithm = 'aes-256-gcm';
 
 // Public key is hardcoded for testing reasons
 let publicKeyEndpoint;
-let uiEndpoint;
+//let uiEndpoint;
 let loginWindow;
 let publicKey;
 
@@ -185,7 +185,7 @@ const updateSettings = () => {
   const settings = readSettings();
 
   publicKeyEndpoint = settings.publicKeyEndpoint;
-  uiEndpoint = settings.uiEndpoint;
+  //uiEndpoint = settings.uiEndpoint;
 
   axios.get(publicKeyEndpoint).then(response => {
     publicKey = response.data.publicKey;
