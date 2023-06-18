@@ -1,15 +1,17 @@
 import type React from "react";
 import { useState } from "react";
 import { AppShell, Navbar, Text, Button } from "@mantine/core";
-import { useAuth, useAuthSetJWT, UseAuthResult } from "../data/auth";
+import { UserClass, useAuth, useAuthSetJWT, UseAuthResult } from "../data/auth";
 import GlobalWrapper from "./GlobalWrapper";
 import TestInjectJWT from "./TestInjectJWT";
 import MgmtPrize from "./MgmtPrize";
 import MgmtGame from "./MgmtGame";
+import MgmtCoupon from "./MgmtCoupon";
 
 enum Pages {
   MgmtPrize,
   MgmtGame,
+  MgmtCoupon,
 }
 
 const MgmtSidePanel: React.FC<{
@@ -28,19 +30,31 @@ const MgmtSidePanel: React.FC<{
 
       <Button
         mt="md"
-        disabled={page === Pages.MgmtPrize}
-        onClick={() => setPage(Pages.MgmtPrize)}
+        disabled={page === Pages.MgmtCoupon}
+        onClick={() => setPage(Pages.MgmtCoupon)}
       >
-        Manage Prizes
+        Validate Coupons
       </Button>
 
-      <Button
-        mt="md"
-        disabled={page === Pages.MgmtGame}
-        onClick={() => setPage(Pages.MgmtGame)}
-      >
-        Manage Games
-      </Button>
+      {auth.userClass === UserClass.manager && (
+        <>
+          <Button
+            mt="md"
+            disabled={page === Pages.MgmtPrize}
+            onClick={() => setPage(Pages.MgmtPrize)}
+          >
+            Manage Prizes
+          </Button>
+
+          <Button
+            mt="md"
+            disabled={page === Pages.MgmtGame}
+            onClick={() => setPage(Pages.MgmtGame)}
+          >
+            Manage Games
+          </Button>
+        </>
+      )}
 
       <Button color="red" mt="md" onClick={logout}>
         Logout
@@ -54,7 +68,7 @@ const MgmtSidePanel: React.FC<{
  */
 const MgmtUI: React.FunctionComponent = () => {
   const auth = useAuth();
-  const [page, setPage] = useState(Pages.MgmtPrize);
+  const [page, setPage] = useState(Pages.MgmtCoupon);
 
   if (!auth) {
     return (
@@ -67,8 +81,10 @@ const MgmtUI: React.FunctionComponent = () => {
   let pageComponent;
   if (page === Pages.MgmtGame) {
     pageComponent = <MgmtGame />;
-  } else {
+  } else if (page === Pages.MgmtPrize) {
     pageComponent = <MgmtPrize />;
+  } else {
+    pageComponent = <MgmtCoupon />;
   }
 
   return (

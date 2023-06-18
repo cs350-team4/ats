@@ -69,7 +69,6 @@ export const useGameList = (jwt: string) => {
   });
 };
 
-
 // Custom error for game update mutations
 export class GameUpdateError extends Error {
   httpCode?: number;
