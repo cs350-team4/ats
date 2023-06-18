@@ -7,22 +7,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const password = document.getElementById("password").value;
     ipcRenderer.send('register:submit', {jwt, password});
   });
+
+  document.querySelector('.back-button').addEventListener('click', (_event) => { // eslint-disable-line no-unused-vars
+    window.location.href = `userlist.html`;
+  });
 });
 
 ipcRenderer.on('register:success', (_options) => {
   window.location.href = `userlist.html`;
-  console.log("success");
 });
 
 ipcRenderer.on('register:failure', (options) => {
-  sendError(`Failure: ${options}`);
+  nullMessage();
+  setTimeout(() => { sendError(`Failure: ${options}`); }, 100);
 });
 
 const sendError = (error) => {
-  const errorMessage = document.getElementById("error-message");
-  errorMessage.textContent = error;
+  const message = document.getElementById("message");
+  message.style.color = '#ff0000';
+  message.textContent = error;
 }
 
-document.querySelector('.back-button').addEventListener('click', (_event) => { // eslint-disable-line no-unused-vars
-  window.location.href = `userlist.html`;
-});
+const nullMessage = () => {
+  const message = document.getElementById("message");
+  message.textContent = null;
+}
