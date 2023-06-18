@@ -12,6 +12,7 @@ from api.logs import LoggingMiddleware, SecurityLog
 from api.models import Client, GenerateToken, OwnedModel
 from api.routers.coupon import router as coupon_router
 from api.routers.game import router as game_router
+from api.routers.logs import router as logs_router
 from api.routers.prize import router as prize_router
 from api.routers.user import router as user_router
 from api.settings import settings
@@ -45,6 +46,7 @@ app.include_router(game_router, prefix="/games")
 app.include_router(prize_router, prefix="/prizes")
 app.include_router(coupon_router, prefix="/coupon")
 app.include_router(user_router, prefix="/user")
+app.include_router(logs_router, prefix="/logs")
 
 
 @app.post("/auth/generateToken", tags=["auth"])
