@@ -11,7 +11,6 @@ from api.utils import generate_serial
 
 router: APIRouter = APIRouter(tags=["coupon"])
 
-# idk if this is thread safe but idc
 recently_issued_coupons = {}
 
 
@@ -94,7 +93,6 @@ def use_coupon(
     return Response(status_code=200)
 
 
-# TODO: Open issue: No check for user
 @router.delete("/{serial_num}")
 def delete_coupon(
     *,
