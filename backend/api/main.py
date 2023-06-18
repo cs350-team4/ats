@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession
+from api.logs import LoggingMiddleware
 from api.models import Client, GenerateToken, OwnedModel
 from api.routers.coupon import router as coupon_router
 from api.routers.game import router as game_router
@@ -30,6 +31,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(LoggingMiddleware)
 
 
 @app.on_event("startup")
