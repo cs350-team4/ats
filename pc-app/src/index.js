@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, Menu, ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -26,9 +26,8 @@ if (require('electron-squirrel-startup')) {
 // Create userlist window
 const createUserlistWindow = () => {
 
-  // Implement menu
-  //const loginMenu = Menu.buildFromTemplate(menu);
-  //Menu.setApplicationMenu(loginMenu);
+  // Set
+  Menu.setApplicationMenu(menu)
 
   // Set settings
   updateSettings();
@@ -289,6 +288,16 @@ const decrypt = (encrypted, iv, authTag, key) => {
     return { success: false, option: error};
   }
 };
+
+const menu = Menu.buildFromTemplate([
+  {
+    label: 'Exit to Main Menu',
+      click: function(){
+        app.relaunch()
+        app.exit()
+      }
+  }
+]);
 
 // App is ready
 app.on('ready', createUserlistWindow);
