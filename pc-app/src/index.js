@@ -15,7 +15,6 @@ const algorithm = 'aes-256-gcm';
 // Public key is hardcoded for testing reasons
 let publicKeyEndpoint = "http://127.0.0.1:8000/auth/publicKey";
 let loginWindow;
-let settingsWindow;
 let publicKey;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -62,7 +61,7 @@ ipcMain.on('userlist:get', (_err, _options) => {
   loginWindow.webContents.send('userlist:done', database);
 });
 
-// Handle loggin
+// Handle login
 ipcMain.on('login:submit', (_err, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
@@ -108,7 +107,27 @@ ipcMain.on('register:submit', (_err, options) => {
   });
 });
 
-// Read the JSON file
+// Send settings to renderer
+ipcMain.on('settings:get', (_err, _options) => {
+  const settings = readSettings();
+  loginWindow.webContents.send('settings:done', settings);
+});
+
+// Handle settings change
+ipcMain.on('settings:submit', (_err, options) => {
+  try {
+    const settings = {
+      "publicKeyEndpoint": options.publicKeyEndpoint,
+      "uiEndpoint": options.uiEndpoint
+    };
+    updateSettings(settings);
+    loginWindow.webContents.send('settings:success');
+  } catch (error) {
+    loginWindow.webContents.send('settings:failure', error);
+  }
+});
+
+// Read the users.json file
 const readDatabase = () => {
   try {
     const database = fs.readFileSync(path.join(__dirname, 'users.json'));
@@ -119,12 +138,32 @@ const readDatabase = () => {
   }
 }
 
-// Write to the JSON file
+// Write to the users.json file
 const writeDatabase = (database) => {
   try {
     fs.writeFileSync(path.join(__dirname, 'users.json'), JSON.stringify(database, null, 2));
   } catch (error) {
     console.error('Error writing to the database: ', error);
+  }
+}
+
+// Read the settings.json file
+const readSettings = () => {
+  try {
+    const data = fs.readFileSync(path.join(__dirname, 'settings.json'));
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading settings: ', error);
+    return { settings: [] };
+  }
+}
+
+// Update the settings.json file
+const updateSettings = (settings) => {
+  try {
+    fs.writeFileSync(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, 2));
+  } catch (error) {
+    console.error('Error updating settings: ', error);
   }
 }
 
