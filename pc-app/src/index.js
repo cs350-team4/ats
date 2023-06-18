@@ -26,11 +26,7 @@ if (require('electron-squirrel-startup')) {
 // Create userlist window
 const createUserlistWindow = () => {
 
-  // Set
   Menu.setApplicationMenu(menu)
-
-  // Set settings
-  updateSettings();
   
   mainWindow = new BrowserWindow({
     title: 'Login',
@@ -45,7 +41,6 @@ const createUserlistWindow = () => {
 
   mainWindow.loadFile(path.join(__dirname, 'userlist.html'));
 
-  // Open devtools if in dev env
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
@@ -53,8 +48,9 @@ const createUserlistWindow = () => {
   mainWindow.maximize();
 };
 
-// Send all users to renderer
+// Update settings and send all users to renderer
 ipcMain.on('userlist:get', (_err, _options) => {
+  updateSettings();
   const database = readDatabase();
   mainWindow.webContents.send('userlist:done', database);
 });
@@ -76,18 +72,18 @@ ipcMain.on('login:submit', (_err, options) => {
 ipcMain.on('reset:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      mainWindow.webContents.send('register:failure', 'JWT verification failed');
+      mainWindow.webContents.send('reset:failure', 'JWT verification failed');
       return;
     } 
     if (options.username !== decoded.name) {
-      mainWindow.webContents.send('register:failure', 'JWT does not belong to this user');
+      mainWindow.webContents.send('reset:failure', 'JWT does not belong to this user');
       return;
     }
     err = resetUser(decoded.name, options.jwt, options.password);
     if (!err) {
-      mainWindow.webContents.send('register:success');
+      mainWindow.webContents.send('reset:success');
     } else {
-      mainWindow.webContents.send('register:failure', err);
+      mainWindow.webContents.send('reset:failure', err);
     }
   });
 });
@@ -131,7 +127,7 @@ ipcMain.on('settings:submit', (_err, options) => {
 // Read the users.json file
 const readDatabase = () => {
   
-  // Create Database if doesn't exist
+  // Create database if doesn't exist
   if (!fs.existsSync(path.join(__dirname, 'users.json'))) {
     writeDatabase({
       "users": []
@@ -159,7 +155,7 @@ const writeDatabase = (database) => {
 // Read the settings.json file
 const readSettings = () => {
   
-  // Create Settings if doesn't exist
+  // Create settings if doesn't exist
   if (!fs.existsSync(path.join(__dirname, 'settings.json'))) {
     writeSettings({ 
       "publicKeyEndpoint": "", 
@@ -289,6 +285,7 @@ const resetUser = (username, jwt, password) => {
   return null;
 }
 
+// Inject JWT in frontend UI
 const injectJWT = (jwtToken) => {
   const script = `
     const checkExist = setInterval(function() {
