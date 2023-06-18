@@ -52,42 +52,42 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         except Exception:
             pass
 
-        response = await call_next(request)
         safe_request_headers = Headers(
             {
                 k: (v if k not in SENSITIVE_HEADERS else "[Stripped for privacy]")
                 for k, v in request.headers.items()
             }
         )
+
+        HTTP_logger.info(f"{time}::Request: {request.method} {request.url.path}")
+        HTTP_logger.info(f"{time}::Request headers: {safe_request_headers}")
+        HTTP_logger.info(f"{time}::Query params: {dict(request.query_params)}")
+        if request_body:
+            for k in SENSITIVE_FIELDS:
+                if k in request_body:
+                    request_body[k] = "[Stripped for privacy]"
+            HTTP_logger.info(f"{time}::Request body: {request_body}")
+        else:
+            HTTP_logger.info(f"{time}::Request body: [empty]")
+
+        response = await call_next(request)
         safe_response_headers = Headers(
             {
                 k: (v if k not in SENSITIVE_HEADERS else "[Stripped for privacy]")
                 for k, v in response.headers.items()
             }
         )
-
-        HTTP_logger.info(f"{time}:Request: {request.method} {request.url.path}")
-        HTTP_logger.info(f"{time}:Request headers: {safe_request_headers}")
-        HTTP_logger.info(f"{time}:Query params: {dict(request.query_params)}")
-        if request_body:
-            for k in SENSITIVE_FIELDS:
-                if k in request_body:
-                    request_body[k] = "[Stripped for privacy]"
-            HTTP_logger.info(f"{time}:Request body: {request_body}")
-        else:
-            HTTP_logger.info(f"{time}:Request body: [empty]")
-
-        HTTP_logger.info(f"{time}:Response: {response.status_code}")
-        HTTP_logger.info(f"{time}:Response headers: {safe_response_headers}")
+        HTTP_logger.info(f"{time}::Response: {response.status_code}")
+        HTTP_logger.info(f"{time}::Response headers: {safe_response_headers}")
 
         # There is no easy way to fetch body of response, following doesn't work
         # if response.body:
         #     if request.url.path == "/auth/generateToken":
-        #         HTTP_logger.info(f"{time}:Response body: [Stripped for privacy]")
+        #         HTTP_logger.info(f"{time}::Response body: [Stripped for privacy]")
         #     else:
         #         HTTP_logger.info(f"Response body: {response.body}")
         # else:
-        #     HTTP_logger.info(f"{time}:Response body: [empty]")
+        #     HTTP_logger.info(f"{time}::Response body: [empty]")
 
         return response
 
@@ -95,22 +95,22 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 class TransactionLog:
     @staticmethod
     def ticket(msg):
-        transaction_logger.info(f"TICKET:{time_ns()}:{msg}")
+        transaction_logger.info(f"{time_ns()}::TICKET:{msg}")
 
     @staticmethod
     def coupon(msg):
-        transaction_logger.info(f"COUPON:{time_ns()}:{msg}")
+        transaction_logger.info(f"{time_ns()}::COUPON:{msg}")
 
 
 class SecurityLog:
     @staticmethod
     def info(msg):
-        security_logger.info(f"INFO:{time_ns()}:{msg}")
+        security_logger.info(f"{time_ns()}::INFO:{msg}")
 
     @staticmethod
     def warning(msg):
-        security_logger.warning(f"WARN:{time_ns()}:{msg}")
+        security_logger.warning(f"{time_ns()}::WARN:{msg}")
 
     @staticmethod
     def error(msg):
-        security_logger.error(f"ERROR:{time_ns()}:{msg}")
+        security_logger.error(f"{time_ns()}::ERROR:{msg}")
