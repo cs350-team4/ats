@@ -73,11 +73,6 @@ const handleLoginSubmit = (event) => { // eslint-disable-line no-unused-vars
   ipcRenderer.send('login:submit', {username, password});
 }
 
-ipcRenderer.on('login:success', (_options) => {
-  goToInterface();
-  console.log("success");
-});
-
 ipcRenderer.on('login:failure', (options) => {
   sendError(`Failure: ${options}`);
 });

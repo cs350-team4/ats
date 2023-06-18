@@ -14,8 +14,8 @@ const algorithm = 'aes-256-gcm';
 
 // Public key is hardcoded for testing reasons
 let publicKeyEndpoint;
-//let uiEndpoint;
-let loginWindow;
+let uiEndpoint;
+let mainWindow;
 let publicKey;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -32,7 +32,7 @@ const createUserlistWindow = () => {
   // Set settings
   updateSettings();
   
-  loginWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     title: 'Login',
     width: isDev ? 1000 : 500,
     height: 600,
@@ -43,27 +43,29 @@ const createUserlistWindow = () => {
     },
   });
 
-  loginWindow.loadFile(path.join(__dirname, 'userlist.html'));
+  mainWindow.loadFile(path.join(__dirname, 'userlist.html'));
 
   // Open devtools if in dev env
   if (isDev) {
-    loginWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
+
+  mainWindow.maximize();
 };
 
 // Send all users to renderer
 ipcMain.on('userlist:get', (_err, _options) => {
   const database = readDatabase();
-  loginWindow.webContents.send('userlist:done', database);
+  mainWindow.webContents.send('userlist:done', database);
 });
 
 // Handle login
 ipcMain.on('login:submit', (_err, options) => {
   const {success, option} = loginUser(options.username, options.password);
   if (success) {
-    loginWindow.webContents.send('login:success');
+    mainWindow.loadURL(uiEndpoint);
   } else {
-    loginWindow.webContents.send('login:failure', option);
+    mainWindow.webContents.send('login:failure', option);
   }
 });
 
@@ -71,18 +73,18 @@ ipcMain.on('login:submit', (_err, options) => {
 ipcMain.on('reset:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'JWT verification failed');
+      mainWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     } 
     if (options.username !== decoded.name) {
-      loginWindow.webContents.send('register:failure', 'JWT does not belong to this user');
+      mainWindow.webContents.send('register:failure', 'JWT does not belong to this user');
       return;
     }
     err = resetUser(decoded.name, options.jwt, options.password);
     if (!err) {
-      loginWindow.webContents.send('register:success');
+      mainWindow.webContents.send('register:success');
     } else {
-      loginWindow.webContents.send('register:failure', err);
+      mainWindow.webContents.send('register:failure', err);
     }
   });
 });
@@ -91,14 +93,14 @@ ipcMain.on('reset:submit', (_err, options) => {
 ipcMain.on('register:submit', (_err, options) => {
   jwt.verify(options.jwt, publicKey, (err, decoded) => {
     if (err) {
-      loginWindow.webContents.send('register:failure', 'JWT verification failed');
+      mainWindow.webContents.send('register:failure', 'JWT verification failed');
       return;
     }
     err = addUser(decoded.name, options.jwt, options.password);
     if (!err) {
-      loginWindow.webContents.send('register:success');
+      mainWindow.webContents.send('register:success');
     } else {
-      loginWindow.webContents.send('register:failure', err);
+      mainWindow.webContents.send('register:failure', err);
     }
   });
 });
@@ -106,7 +108,7 @@ ipcMain.on('register:submit', (_err, options) => {
 // Send settings to renderer
 ipcMain.on('settings:get', (_err, _options) => {
   const settings = readSettings();
-  loginWindow.webContents.send('settings:done', settings);
+  mainWindow.webContents.send('settings:done', settings);
 });
 
 // Handle settings change
@@ -119,7 +121,7 @@ ipcMain.on('settings:submit', (_err, options) => {
     });
     updateSettings();
   } catch (error) {
-    loginWindow.webContents.send('settings:failure', error);
+    mainWindow.webContents.send('settings:failure', error);
   }
 });
 
@@ -185,13 +187,13 @@ const updateSettings = () => {
   const settings = readSettings();
 
   publicKeyEndpoint = settings.publicKeyEndpoint;
-  //uiEndpoint = settings.uiEndpoint;
+  uiEndpoint = settings.uiEndpoint;
 
   axios.get(publicKeyEndpoint).then(response => {
     publicKey = response.data.publicKey;
-    loginWindow.webContents.send('settings:success');
+    mainWindow.webContents.send('settings:success');
   }).catch(_err => {
-    loginWindow.webContents.send('settings:failure', 'could not retrieve public key');
+    mainWindow.webContents.send('settings:failure', 'could not retrieve public key');
   });
 }
 
@@ -309,9 +311,8 @@ const decrypt = (encrypted, iv, authTag, key) => {
 const menu = Menu.buildFromTemplate([
   {
     label: 'Exit to Main Menu',
-      click: function(){
-        app.relaunch()
-        app.exit()
+      click: () => {
+        mainWindow.loadFile(path.join(__dirname, 'userlist.html'));
       }
   }
 ]);
