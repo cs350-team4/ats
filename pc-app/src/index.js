@@ -112,11 +112,11 @@ ipcMain.on('settings:get', (_err, _options) => {
 // Handle settings change
 ipcMain.on('settings:submit', (_err, options) => {
   try {
-    const settings = {
+
+    writeSettings({
       "publicKeyEndpoint": options.publicKeyEndpoint,
       "uiEndpoint": options.uiEndpoint
-    };
-    writeSettings(settings);
+    });
     updateSettings();
   } catch (error) {
     loginWindow.webContents.send('settings:failure', error);
@@ -125,6 +125,14 @@ ipcMain.on('settings:submit', (_err, options) => {
 
 // Read the users.json file
 const readDatabase = () => {
+  
+  // Create Database if doesn't exist
+  if (!fs.existsSync(path.join(__dirname, 'users.json'))) {
+    writeDatabase({
+      "users": []
+    });
+  }
+  
   try {
     const database = fs.readFileSync(path.join(__dirname, 'users.json'));
     return JSON.parse(database);
@@ -145,6 +153,15 @@ const writeDatabase = (database) => {
 
 // Read the settings.json file
 const readSettings = () => {
+  
+  // Create Settings if doesn't exist
+  if (!fs.existsSync(path.join(__dirname, 'settings.json'))) {
+    writeSettings({ 
+      "publicKeyEndpoint": "", 
+      "uiEndpoint": "" 
+    });
+  }
+  
   try {
     const settings = fs.readFileSync(path.join(__dirname, 'settings.json'));
     return JSON.parse(settings);
