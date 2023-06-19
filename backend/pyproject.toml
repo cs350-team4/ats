@@ -41,6 +41,7 @@ pytest-pikachu = "^1.0.0"
 [tool.taskipy.tasks]
 start = "uvicorn api.main:app"
 start-dev = "uvicorn api.main:app --reload"
+deploy = "uvicorn api.main:app --host 0.0.0.0"
 lint = "./scripts/lint.sh"
 test = "./scripts/test.sh"
 cov-html = "./scripts/test-cov-html.sh"

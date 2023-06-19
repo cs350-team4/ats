@@ -5,6 +5,8 @@ import jwt
 from fastapi import APIRouter, Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 from api.db.engine import client_engine, local_engine
 from api.dependencies import GetSession
@@ -48,7 +50,6 @@ app.include_router(coupon_router, prefix="/coupon")
 app.include_router(user_router, prefix="/user")
 app.include_router(logs_router, prefix="/logs")
 
-
 @app.post("/auth/generateToken", tags=["auth"])
 def generate_token(
     *, session: Session = Depends(GetSession(client_engine)), payload: GenerateToken
@@ -74,3 +75,6 @@ def generate_token(
 @app.get("/auth/publicKey", tags=["auth"])
 def public_key():
     return {"publicKey": settings.PUBLIC_KEY}
+
+
+app.mount("/", StaticFiles(directory="../frontend/dist", html=True))
