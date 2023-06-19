@@ -70,7 +70,7 @@ const Logs: React.FC = () => {
         return (
           new Date(
             Number(timestampNs.slice(0, timestampNs.length - 6))
-          ).toString() +
+          ).toLocaleString() +
           "::" +
           log
         );
