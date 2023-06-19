@@ -109,6 +109,10 @@ class TransactionLog:
 
 class SecurityLog:
     @staticmethod
+    def debug(msg):
+        security_logger.debug(f"{time_ns()}::DEBUG:{msg}")
+
+    @staticmethod
     def info(msg):
         security_logger.info(f"{time_ns()}::INFO:{msg}")
 

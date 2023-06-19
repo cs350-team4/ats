@@ -43,7 +43,7 @@ class JWTBearer(HTTPBearer):
                     f"Attempt to login with malformed JWT [{credentials.credentials}]"
                 )
                 raise HTTPException(status_code=403, detail="Invalid authentication.")
-            SecurityLog.info(
+            SecurityLog.debug(
                 f"[{jwt.get('name', None)}] logged in successfully with JWT[{jwt.get('sub', None)}]"
             )
             return jwt
