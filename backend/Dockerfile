@@ -22,11 +22,10 @@ FROM python-base as builder-base
 RUN apk add --no-cache curl build-base linux-headers
 
 WORKDIR $PYSETUP_PATH
-RUN --mount=type=cache,target=/root/.cache \
-	curl -sSL https://install.python-poetry.org | python -
+RUN curl -sSL https://install.python-poetry.org | python -
 
 COPY ./poetry.lock ./pyproject.toml ./
-RUN --mount=type=cache,target=/root/.cache poetry install --without=dev
+RUN poetry install --without=dev
 
 
 # NOTE: Untested
@@ -51,4 +50,4 @@ ENV FASTAPI_ENV=production
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY ./api/ /app/api
 WORKDIR /app
-CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port $API_PORT"]
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port $PORT"]
