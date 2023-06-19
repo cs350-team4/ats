@@ -9,14 +9,14 @@ class Settings(BaseSettings):
     PUBLIC_KEY: str
     PRIVATE_KEY: str
 
-    POSTGRES_SERVER: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
+    POSTGRES_SERVER: str | None
+    POSTGRES_USER: str | None
+    POSTGRES_PASSWORD: str | None
     POSTGRES_DB: str | None
 
-    POSTGRES_CLIENT_SERVER: str
-    POSTGRES_CLIENT_USER: str
-    POSTGRES_CLIENT_PASSWORD: str
+    POSTGRES_CLIENT_SERVER: str | None
+    POSTGRES_CLIENT_USER: str | None
+    POSTGRES_CLIENT_PASSWORD: str | None
     POSTGRES_CLIENT_DB: str | None
 
     POSTGRES_TEST_DB: str | None
