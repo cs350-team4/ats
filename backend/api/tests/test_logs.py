@@ -25,3 +25,23 @@ def test_security_logs():
     assert 200 == get_security_logs(client, manager_tok).status_code
     assert 403 == get_security_logs(client, staff_tok).status_code
     assert 403 == get_security_logs(client, client_tok).status_code
+
+
+def test_http_no_self_log():
+    response1 = get_http_logs(client, manager_tok)
+    response2 = get_http_logs(client, manager_tok)
+
+    assert 200 == response1.status_code
+    assert 200 == response2.status_code
+
+    assert response1.text == response2.text
+
+
+def test_http_no_self_log_limit():
+    response1 = get_http_logs(client, manager_tok, limit=100)
+    response2 = get_http_logs(client, manager_tok, limit=100)
+
+    assert 200 == response1.status_code
+    assert 200 == response2.status_code
+
+    assert response1.text == response2.text
