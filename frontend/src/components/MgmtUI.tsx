@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 import { AppShell, Navbar, Text, Button } from "@mantine/core";
-import { UserClass, useAuth, useAuthSetJWT, UseAuthResult } from "../data/auth";
+import { UserClass, useAuth, UseAuthResult } from "../data/auth";
 import GlobalWrapper from "./GlobalWrapper";
 import TestInjectJWT from "./TestInjectJWT";
 import MgmtPrize from "./MgmtPrize";
@@ -21,8 +21,6 @@ const MgmtSidePanel: React.FC<{
   page: Pages;
   setPage: (newPage: Pages) => void;
 }> = ({ auth, page, setPage }) => {
-  const { logout } = useAuthSetJWT();
-
   return (
     <>
       <Text size="xl" weight={700}>
@@ -65,10 +63,6 @@ const MgmtSidePanel: React.FC<{
           </Button>
         </>
       )}
-
-      <Button color="red" mt="md" onClick={logout}>
-        Logout
-      </Button>
     </>
   );
 };
