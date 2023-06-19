@@ -44,6 +44,11 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         request._receive = receive
 
     async def dispatch(self, request: Request, call_next):
+        # Do not log following endpoint since it will show logs of itself
+        # https://github.com/cs350-team4/ats/issues/11#issuecomment-1596346002
+        if request.url.path == "/logs/http":
+            return await call_next(request)
+
         time = time_ns()
         request_body = None
         try:
