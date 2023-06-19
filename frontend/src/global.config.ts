@@ -10,3 +10,10 @@ export const PRIZE_LIST_PAGE_LENGTH = 24;
 export const PRIZE_LIST_CACHE_TIME = 15 * 60 * 1000; // unit: ms
 // The minimum time cached prize list will be used without refresh
 export const PRIZE_LIST_STALE_TIME = 20 * 1000; // unit: ms
+
+// Number of games per page
+export const GAME_LIST_PAGE_LENGTH = 24;
+// The time game list will be cached
+export const GAME_LIST_CACHE_TIME = 15 * 60 * 1000; // unit: ms
+// The minimum time cached game list will be used without refresh
+export const GAME_LIST_STALE_TIME = 20 * 1000; // unit: ms
