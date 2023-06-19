@@ -24,7 +24,8 @@ def read_logs(filename: str, lines: int) -> list[str]:
             lines_found = f.readlines()
             block_counter -= 1
 
-    return lines_found[-lines:]
+    # Remove newline at the end of the line
+    return [line.strip() for line in lines_found[-lines:]]
 
 
 @router.get("/http")
