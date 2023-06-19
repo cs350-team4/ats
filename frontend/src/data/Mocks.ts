@@ -115,6 +115,24 @@ const GAME_LIST: MockGame[] = [
   },
 ];
 
+const HTTP_LOGS: string[] = [
+  "1687132040515240300::Request: GET /docs\n",
+  "1687132040515240300::Request headers: Headers({'host': 'localhost:8000', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8', 'accept-language': 'en-US,en;q=0.5', 'accept-encoding': 'gzip, deflate, br', 'connection': 'keep-alive', 'cookie': 'csrftoken=6KYVEzwW1YUgTbNIa1FZhfrZbGgEOLBd; next-auth.session-token=cf572651-36c2-43ec-802e-69f2b4c70403', 'upgrade-insecure-requests': '1', 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'none', 'sec-fetch-user': '?1'})\n",
+  "1687132040515240300::Query params: {}\n",
+  "1687132040515240300::Request body: [empty]\n",
+  "1687132040515240300::Response: 200\n",
+  "1687132040515240300::Response headers: Headers({'content-length': '949', 'content-type': 'text/html; charset=utf-8'})\n",
+  "1687132040800483830::Request: GET /openapi.json\n",
+  "1687132040800483830::Request headers: Headers({'host': 'localhost:8000', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0', 'accept': 'application/json,*/*', 'accept-language': 'en-US,en;q=0.5', 'accept-encoding': 'gzip, deflate, br', 'referer': 'http://localhost:8000/docs', 'connection': 'keep-alive', 'cookie': 'csrftoken=6KYVEzwW1YUgTbNIa1FZhfrZbGgEOLBd; next-auth.session-token=cf572651-36c2-43ec-802e-69f2b4c70403', 'sec-fetch-dest': 'empty', 'sec-fetch-mode': 'cors', 'sec-fetch-site': 'same-origin'})\n",
+  "1687132040800483830::Query params: {}\n",
+  "1687132040800483830::Request body: [empty]\n",
+  "1687132040800483830::Response: 200\n",
+  "1687132040800483830::Response headers: Headers({'content-length': '16201', 'content-type': 'application/json'})\n",
+  "1687132429050060909::Request: GET /logs/http\n",
+  "1687132429050060909::Request headers: Headers({'host': 'localhost:8000', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0', 'accept': 'application/json', 'accept-language': 'en-US,en;q=0.5', 'accept-encoding': 'gzip, deflate, br', 'referer': 'http://localhost:8000/docs', 'authorization': 'Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibWFuMSIsInN1YiI6Im1hbmFnZXIiLCJpYXQiOjE2ODQ0MjAyMjl9.UjTbPQP_2YSQi2ojMQfulFNKVX0Z9bA_Nyg_13vyP4CQyqk0iOhikPU6NmzqADeI0a2dimcIb6AQ0vtutAZ3LQ', 'connection': 'keep-alive', 'cookie': 'csrftoken=6KYVEzwW1YUgTbNIa1FZhfrZbGgEOLBd; next-auth.session-token=cf572651-36c2-43ec-802e-69f2b4c70403', 'sec-fetch-dest': 'empty', 'sec-fetch-mode': 'cors', 'sec-fetch-site': 'same-origin'})\n",
+  "1687132429050060909::Query params: {'limit': '50'}\n",
+  "1687132429050060909::Request body: [empty]\n",
+];
 /**
  * use to simulate delayed response
  * @param ms time in milliseconds
@@ -310,5 +328,10 @@ export default [
   rest.delete(API_ROOT + "/games/:id", async (req, res, ctx) => {
     await delay(1000);
     return res(ctx.json({}));
+  }),
+
+  rest.get(API_ROOT + "/logs/http", async (req, res, ctx) => {
+    await delay(1000);
+    return res(ctx.json(HTTP_LOGS));
   }),
 ];

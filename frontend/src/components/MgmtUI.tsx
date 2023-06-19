@@ -7,11 +7,13 @@ import TestInjectJWT from "./TestInjectJWT";
 import MgmtPrize from "./MgmtPrize";
 import MgmtGame from "./MgmtGame";
 import MgmtCoupon from "./MgmtCoupon";
+import Logs from "./Logs";
 
 enum Pages {
   MgmtPrize,
   MgmtGame,
   MgmtCoupon,
+  Logs,
 }
 
 const MgmtSidePanel: React.FC<{
@@ -53,6 +55,14 @@ const MgmtSidePanel: React.FC<{
           >
             Manage Games
           </Button>
+
+          <Button
+            mt="md"
+            disabled={page === Pages.Logs}
+            onClick={() => setPage(Pages.Logs)}
+          >
+            Logs
+          </Button>
         </>
       )}
 
@@ -83,6 +93,8 @@ const MgmtUI: React.FunctionComponent = () => {
     pageComponent = <MgmtGame />;
   } else if (page === Pages.MgmtPrize) {
     pageComponent = <MgmtPrize />;
+  } else if (page === Pages.Logs) {
+    pageComponent = <Logs />;
   } else {
     pageComponent = <MgmtCoupon />;
   }
