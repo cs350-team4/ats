@@ -22,7 +22,7 @@ def create_db_and_tables() -> None:
     OwnedModel.metadata.create_all(local_engine)
 
 
-origins = ["http://localhost:6006", "http://localhost:3000"]
+origins = ["*"]
 
 app = FastAPI(title=settings.app_name)
 app.add_middleware(
